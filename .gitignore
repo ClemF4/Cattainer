@@ -53,5 +53,3 @@ dkms.conf
 
 # debug information files
 *.dwo
-best_full_integer_quant_edgetpu.tflite
-all.jpg
