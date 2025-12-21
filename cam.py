@@ -12,7 +12,7 @@ picam2.configure("preview")
 picam2.start()
 
 # Load the YOLO11 model
-model = YOLO("yolo11n.pt")
+model = YOLO("mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite")
 
 while True:
     # Capture frame-by-frame
