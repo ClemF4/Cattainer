@@ -5,14 +5,14 @@ from ultralytics import YOLO
 
 # Initialize the Picamera2
 picam2 = Picamera2()
-picam2.preview_configuration.main.size = (1280, 720)
+picam2.preview_configuration.main.size = (320, 320)
 picam2.preview_configuration.main.format = "RGB888"
 picam2.preview_configuration.align()
 picam2.configure("preview")
 picam2.start()
 
 # Load the YOLO11 model
-model = YOLO("mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite")
+model = YOLO("yolov8n_full_integer_quant_edgetpu.tflite")
 
 while True:
     # Capture frame-by-frame

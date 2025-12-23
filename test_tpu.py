@@ -11,7 +11,7 @@ except Exception as e:
     exit(1)
 
 # Load the model
-MODEL_PATH = "mobilenet_v2_1.0_224_inat_bird_quant_edgetpu.tflite" 
+MODEL_PATH = "yolov8n_full_integer_quant_edgetpu.tflite" 
 print(f"Loading {MODEL_PATH}...")
 
 try:
