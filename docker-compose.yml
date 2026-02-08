@@ -19,6 +19,7 @@ services:
     # port 5000 directly on the Pi's IP automatically.
 
     volumes:
+      - /dev:/dev
       - .:/app               # Live code editing
       - ./zones_data:/data   # Save zone data
       - /etc/localtime:/etc/localtime:ro # Sync time
