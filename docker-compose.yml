@@ -14,7 +14,7 @@ services:
     privileged: true
     devices:
       - /dev/bus/usb:/dev/bus/usb
-
+      - /dev/video0:/dev/video0     #camera
     # Note: 'ports' are removed because 'network_mode: host' opens 
     # port 5000 directly on the Pi's IP automatically.
 
