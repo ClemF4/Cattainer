@@ -6,17 +6,25 @@ services:
     container_name: Cattainer
     restart: unless-stopped
     
-    # 1. Network: Host mode for Tailscale/HA
+    # 1. NETWORK: Host mode (Required for Tailscale/HA)
     network_mode: host
     
-    # 2. Privileges: Required for USB access
+    # 2. PRIVILEGES: Full Hardware Access
     privileged: true
     
-    # 3. Standard Volume Mapping
+    # 3. THE "HOST PASSTHROUGH" VOLUMES
     volumes:
-      - /dev/bus/usb:/dev/bus/usb  # Access USB devices
-      - .:/app                     # Live Code Editing
-      - ./zones_data:/data         # Save Data
+      # A. Map the USB Bus
+      - /dev/bus/usb:/dev/bus/usb
+      
+      # B. Force Container to use Host's working driver
+      # We map the file on your Pi -> to the location inside Docker
+      - /usr/lib/aarch64-linux-gnu/libedgetpu.so.1.0:/usr/lib/aarch64-linux-gnu/libedgetpu.so.1.0
+      - /usr/lib/aarch64-linux-gnu/libedgetpu.so.1.0:/usr/lib/aarch64-linux-gnu/libedgetpu.so.1
+      
+      # C. Standard Code mappings
+      - .:/app
+      - ./zones_data:/data
       - /etc/localtime:/etc/localtime:ro
 
     environment:
