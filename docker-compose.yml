@@ -6,27 +6,24 @@ services:
     container_name: Cattainer
     restart: unless-stopped
     
-    # 1. NETWORK: Host mode (Required for Tailscale/HA)
+    # 1. Network: Host mode is required for Tailscale/Home Assistant
     network_mode: host
     
-    # 2. PRIVILEGES: Full Hardware Access
+    # 2. Privileged: REQUIRED for USB Hardware Access
     privileged: true
     
-    # 3. THE "HOST PASSTHROUGH" VOLUMES
+    # 3. THE "HOST PASSTHROUGH"
+    # We map the specific library file from your Pi into the container.
+    # This guarantees the container uses the exact same driver version as the host.
     volumes:
-      # A. Map the USB Bus
       - /dev/bus/usb:/dev/bus/usb
-      
-      # B. Force Container to use Host's working driver
-      # We map the file on your Pi -> to the location inside Docker
       - /usr/lib/aarch64-linux-gnu/libedgetpu.so.1.0:/usr/lib/aarch64-linux-gnu/libedgetpu.so.1.0
-      - /usr/lib/aarch64-linux-gnu/libedgetpu.so.1.0:/usr/lib/aarch64-linux-gnu/libedgetpu.so.1
-      
-      # C. Standard Code mappings
+      - /usr/lib/aarch64-linux-gnu/libedgetpu.so.1:/usr/lib/aarch64-linux-gnu/libedgetpu.so.1
       - .:/app
       - ./zones_data:/data
       - /etc/localtime:/etc/localtime:ro
 
     environment:
       - FLASK_ENV=development
+      # Update to your Home Assistant IP
       - MQTT_BROKER=100.89.9.59
