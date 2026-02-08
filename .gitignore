@@ -55,3 +55,9 @@ dkms.conf
 *.dwo
 *.jpg
 *.h264
+
+#photos/videos
+*.mp4
+*.avi
+*.jpg
+*.png
