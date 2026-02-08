@@ -1,14 +1,12 @@
-# 1. Base Image: Mirroring your Pi (Debian 12 Bookworm / Python 3.11)
+# 1. Base Image: Debian 12 (Bookworm) with Python 3.11
+# This matches your Host OS exactly.
 FROM python:3.11-slim-bookworm
 
-# 2. Set environment variables to keep Python clean
+# 2. Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # 3. Install System Dependencies
-# - curl/gnupg: For downloading Google keys
-# - usbutils: To verify the Coral stick is connected
-# - libgl1/libglib2.0-0: Required dependencies for OpenCV
 RUN apt-get update && apt-get install -y \
     curl \
     gnupg \
@@ -17,28 +15,28 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# 4. Install Google Coral EdgeTPU Drivers (Bookworm Compatible)
-# Debian 12 deprecated 'apt-key', so we use the signed-by keyring method.
+# 4. Install the Google Coral Driver (libedgetpu1-std)
+# We use the standard Google repo, which hosts the v16 driver you have.
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/coral-edgetpu-archive-keyring.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/coral-edgetpu-archive-keyring.gpg] https://packages.cloud.google.com/apt coral-edgetpu-stable main" | tee /etc/apt/sources.list.d/coral-edgetpu.list \
     && apt-get update && apt-get install -y \
     libedgetpu1-std \
     && rm -rf /var/lib/apt/lists/*
 
-# 5. Set up the working directory
+# 5. Setup Work Directory
 WORKDIR /app
 
 # 6. Install Python Libraries
 COPY requirements.txt .
-# We use --break-system-packages because Debian 12 is strict about pip, 
-# but inside a container, this is safe and necessary.
+# CRITICAL: We use --break-system-packages because we are overriding 
+# the system's python environment to ensure version 2.14.0 is used.
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt
 
-# 7. Copy your application code
+# 7. Copy Code
 COPY . .
 
-# 8. Create a directory for saving the zone configuration
+# 8. Create data directory
 RUN mkdir -p /data
 
-# 9. Define the command to run your app
+# 9. Run
 CMD ["python", "cattainer.py"]
