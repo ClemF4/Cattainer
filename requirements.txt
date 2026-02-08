@@ -10,3 +10,6 @@ PyYAML
 requests
 tqdm
 psutil
+Flask
+paho-mqtt
+opencv-python-headless
