@@ -41,4 +41,4 @@ COPY . .
 RUN mkdir -p /data
 
 # 9. Define the command to run your app
-CMD ["python", "videotest.py"]
+CMD ["python", "cattainer.py"]

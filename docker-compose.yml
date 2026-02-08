@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  cat-guard:
+    build: .
+    container_name: Cattainer
+    restart: unless-stopped
+    
+    # CRITICAL: Privileged mode is required for USB access (Coral Stick)
+    privileged: true
+    
+    # Map the USB bus so the container can see the Coral stick
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+
+    ports:
+      - "5000:5000"
+
+    volumes:
+      - .:/app               # Live code editing (updates instantly)
+      - ./zones_data:/data   # Save zone data here
+      - /etc/localtime:/etc/localtime:ro # Sync time with Pi
+
+    environment:
+      - FLASK_ENV=development
+      # CHANGE THIS to your Home Assistant IP
+      - MQTT_BROKER=192.168.1.100
