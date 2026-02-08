@@ -4,7 +4,7 @@ import os
 from ultralytics import YOLO
 
 # --- CONFIGURATION ---
-MODEL_PATH = 'model.tflite' # Must match your file name
+MODEL_PATH = 'model_edgetpu.tflite' # Must match your file name
 TEST_MEDIA = 'tests/test_video.mp4'  # Put a video here (or use 'tests/test.jpg')
 OUTPUT_PATH = 'output/test_result.avi' # Where to save the result
 # ---------------------

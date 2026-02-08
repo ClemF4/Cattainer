@@ -1,27 +1,29 @@
 version: '3.8'
 
 services:
-  cat-guard:
+  cattainer:               # <--- Service Name changed
     build: .
-    container_name: Cattainer
+    image: cattainer       # <--- Name of the blueprint (Image)
+    container_name: Cattainer # <--- Name of the running machine
     restart: unless-stopped
     
-    # CRITICAL: Privileged mode is required for USB access (Coral Stick)
-    privileged: true
+    # 1. NETWORK FIX: This lets the container see your Tailscale VPN & Home Assistant
+    network_mode: host
     
-    # Map the USB bus so the container can see the Coral stick
+    # 2. USB ACCESS: Required for Coral Stick
+    privileged: true
     devices:
       - /dev/bus/usb:/dev/bus/usb
 
-    ports:
-      - "5000:5000"
+    # Note: 'ports' are removed because 'network_mode: host' opens 
+    # port 5000 directly on the Pi's IP automatically.
 
     volumes:
-      - .:/app               # Live code editing (updates instantly)
-      - ./zones_data:/data   # Save zone data here
-      - /etc/localtime:/etc/localtime:ro # Sync time with Pi
+      - .:/app               # Live code editing
+      - ./zones_data:/data   # Save zone data
+      - /etc/localtime:/etc/localtime:ro # Sync time
 
     environment:
       - FLASK_ENV=development
-      # CHANGE THIS to your Home Assistant IP
-      - MQTT_BROKER=192.168.1.100
+      # Now you can use the Tailscale IP (e.g., 100.x.x.x)
+      - MQTT_BROKER=100.89.9.59
