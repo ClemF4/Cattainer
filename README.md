@@ -1,9 +1,11 @@
 # Cattainer
 Cat Tech
 
-Prerequisite: Please install the Coral Drivers on your Raspberry Pi first by running standard installation instructions
+Please run the script first to install the correct TPU drivers for your device.
 
-Go to:
-https://github.com/feranick/libedgetpu/releases
+chmod +x setup.sh
+sudo ./setup.sh
 
-and install the version which matches your device's ubuntu version. 
+Then start the container:
+docker-compose up -d --build
+
