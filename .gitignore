@@ -61,4 +61,9 @@ dkms.conf
 *.avi
 *.jpg
 *.png
+
+#Docker Container core
 core
+
+#Python Cache
+*.pyc
