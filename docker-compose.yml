@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   cattainer:
-    image: cattainer
+    image: Cattainer
     container_name: Cattainer
     restart: unless-stopped
     
