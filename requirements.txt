@@ -14,3 +14,4 @@ Flask
 paho-mqtt
 opencv-python-headless
 shapely
+flask-cors
