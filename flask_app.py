@@ -1,3 +1,4 @@
+#"""
 from flask import Flask
 from flask_cors import CORS  # installed flask-cors to handle security conflicts between browsers and the server
 
@@ -15,3 +16,5 @@ def add_header(response):
 
 if __name__ == "__main__":
     app.run(debug=True)
+#"""
+
