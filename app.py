@@ -6,8 +6,10 @@ app = Flask(__name__)
 CORS(app)  # This line adds something to the header telling my browser that this site is safe
 
 @app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+def index():
+    return render_template('index.html')
+
+#Have the app route save zones here & def safe_zones(), do all the JSON logic here, saving it to a file ect
 
 @app.after_request
 def add_header(response):
