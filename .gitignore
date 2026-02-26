@@ -68,3 +68,6 @@ core
 #.vscode & _pycache_
 /.vscode
 /__pycache__
+
+#venv
+/venv
