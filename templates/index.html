@@ -6,21 +6,29 @@
     <style> /*This section has all the CSS*/
         body {
             font-family:Verdana, Geneva, Tahoma, sans-serif;
-            background-color: black;
-            color: white;
+            background-color: rgb(43, 42, 51); 
+            color: rgb(251, 251, 254);
             text-align: center;
         } 
-
         div{
-            border: 5px;
             background-color: green;
             text-align: center;
         }
-
         canvas {
             max-width: 100%;
             height: auto;
             background-color: white;
+        }
+        select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .controls {
+            margin: 20px auto;
+            padding: 8px;
+            border-radius: 8px;
         }
     </style>    
 
@@ -32,8 +40,12 @@
 
     <canvas id="myCanvas" width="320" height="320"></canvas>
 
-    <div>
-        <p>Zone Options:</p>
+    <div class="controls">
+        <label for="zoneMenu"><b>Choose a Zone</b></label>
+        <select id="zoneMenu">
+            <option value="red">Red Zone</option>
+            <option value="amber">Amber Zone</option>
+        </select>
     </div>
 
     <script> /*This section has all the JavaScript*/
@@ -45,9 +57,27 @@
         
         const bgImage = new Image();
         bgImage.src = "/static/background.png";
-        bgImage.onload = function() {
+        //onload makes this next line wait until the bgImage has been completely downloaded first
+        bgImage.onload = function() { 
             ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
         }
+
+        //Zone selection menu 
+        let currentZoneColour = "red";
+        const zoneMenu = document.getElementById("zoneMenu");
+        const controlsDiv = document.querySelector(".controls");
+        zoneMenu.addEventListener("change", function(event) {
+            currentZoneColour = event.target.value;
+            console.log("Pen colour is: " + currentZoneColour);
+        //Change the background colour of the div depending on which colour is selected
+            if (currentZoneColour == "red"){
+                controlsDiv.style.backgroundColor = "red";
+            } else if (currentZoneColour == "amber"){
+                controlsDiv.style.backgroundColor = "rgb(221, 175, 10)";
+            }
+        })
+
+        
     </script>
 </body>
 </html> 
