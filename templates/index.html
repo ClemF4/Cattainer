@@ -1,16 +1,43 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Cattainer</title>
-    <style>
+    <meta name="Cattainer" content="Cattainer zone definition and saving website to allow users to select the zones their cat is allowed in">
+    <style> /*This section has all the CSS*/
         body {
-            font-family: Arial, Helvetica, sans-serif;background-color: black;color: white;} 
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            background-color: black;
+            color: white;
+            text-align: center;
+        } 
+
+        div{
+            border: 5px;
+            background-color: green;
+            text-align: center;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            background-color: white;
+        }
     </style>    
+
 </head>
-<body>
+<!--Body contains the main HTML section-->
+<body> 
+    <h1>Cattainer</h1>
+    <p>Draw your zones below.</p>
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
+    <canvas id="myCanvas" width="320" height="320"></canvas>
 
+    <div>
+        <p>Zone Options:</hp>
+    </div>
+
+    <script> /*This section has all the JavaScript*/
+        console.log("Webpage has loaded");
+    </script>
 </body>
 </html> 
