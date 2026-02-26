@@ -28,16 +28,26 @@
 <!--Body contains the main HTML section-->
 <body> 
     <h1>Cattainer</h1>
-    <p>Draw your zones below.</p>
+    <p>Draw your <b>zones</b> below.</p>
 
     <canvas id="myCanvas" width="320" height="320"></canvas>
 
     <div>
-        <p>Zone Options:</hp>
+        <p>Zone Options:</p>
     </div>
 
     <script> /*This section has all the JavaScript*/
         console.log("Webpage has loaded");
+
+        //Get background.png to become the background of the canvas
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        const bgImage = new Image();
+        bgImage.src = "/static/background.png";
+        bgImage.onload = function() {
+            ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+        }
     </script>
 </body>
 </html> 
