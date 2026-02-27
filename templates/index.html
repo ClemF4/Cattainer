@@ -7,18 +7,16 @@
         body {
             font-family:Verdana, Geneva, Tahoma, sans-serif;
             background-color: rgb(17, 17, 17); /*Matches with HA*/
-            color: rgb(251, 251, 254);
+            color: rgb(222, 222, 222);
             text-align: center;
         } 
         div{
             background-color: green;
-            text-align: center;
         }
         canvas {
             max-width: 100%;
             height: auto;
             background-color: black;
-            padding: 2px;       
         }
         select {
             padding: 8px;
@@ -31,6 +29,7 @@
             margin: 20px auto;
             padding: 8px;
             border-radius: 8px;
+            width: 320px;
         }
     </style>    
 
@@ -71,12 +70,79 @@
         zoneMenu.addEventListener("change", function(event) {
             currentZoneColour = event.target.value;
             console.log("Pen colour is: " + currentZoneColour);
-        //Change the background colour of the div depending on which colour is selected
+
+            //Change the background colour of the div depending on which colour is selected
             if (currentZoneColour == "red"){
                 controlsDiv.style.backgroundColor = "red";
             } else if (currentZoneColour == "amber"){
                 controlsDiv.style.backgroundColor = "rgb(221, 175, 10)";
             }
+        })
+
+        //Get the coordinates
+        let currentPolygon = [];
+        canvas.addEventListener("mousedown", function(event){
+            let clickX = event.offsetX;
+            let clickY = event.offsetY;
+
+            //Snap clicks to the edges 
+            const snapThreshold = 10;
+
+            if (clickX < snapThreshold){
+                clickX=0;
+            } else if (clickX > canvas.width-snapThreshold){
+                clickX = canvas.width;
+            }
+            if (clickY < snapThreshold){
+                clickY=0;
+            } else if (clickY > canvas.height-snapThreshold){
+                clickY = canvas.height;
+            }
+
+            //Save the coordinates to the array
+            currentPolygon.push({x: clickX, y: clickY});
+
+            //Draw the dots & connect the dots
+            let canvasColour = currentZoneColour;
+            if(currentZoneColour === "amber"){
+                canvasColour = "rgb(221, 175, 10)";
+            }
+
+            ctx.fillStyle = canvasColour;
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = canvasColour;
+            ctx.fillRect(clickX, clickY, 5, 5);
+            if(currentPolygon.length>1){
+                let prevPoint = currentPolygon[currentPolygon.length-2];
+                ctx.beginPath();
+                ctx.moveTo(prevPoint.x, prevPoint.y);
+                ctx.lineTo(clickX, clickY);
+                ctx.stroke();
+                
+                //Finishing the polygon logic
+                let firstPoint = currentPolygon[0];
+                if(Math.abs(clickX-firstPoint.x) < 20 && Math.abs(clickY-firstPoint.y) < 20){
+                    console.log("Finishing the polygon");
+                    clickX = firstPoint.x;
+                    clickY = firstPoint.y;
+                    //Fill in the polygon
+                    ctx.beginPath();
+                    ctx.moveTo(currentPolygon[0].x, currentPolygon[0].y);
+                    for(let i = 1; i<currentPolygon.length;i++){
+                        ctx.lineTo(currentPolygon[i].x, currentPolygon[i].y);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.globalAlpha = 0.4;
+                    ctx.fillStyle = canvasColour;
+                    ctx.fill();
+                    
+                    ctx.globalAlpha = 1;
+                    currentPolygon = [];
+                    return;
+                }
+            }
+
         })
 
         
