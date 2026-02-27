@@ -10,9 +10,6 @@
             color: rgb(222, 222, 222);
             text-align: center;
         } 
-        div{
-            background-color: green;
-        }
         canvas {
             max-width: 100%;
             height: auto;
@@ -31,6 +28,11 @@
             border-radius: 8px;
             width: 320px;
         }
+        button {
+            padding: 12px 16px;
+            border-radius: 8px;
+            
+        }
     </style>    
 
 </head>
@@ -47,6 +49,15 @@
             <option value="red">Red Zone</option>
             <option value="amber">Amber Zone</option>
         </select>
+    </div>
+
+    <div class=""buttons">
+        <button id="saveButton">
+            <b>Save Zones</b>
+        </button>
+        <button id="resetButton">
+            <b>Reset Canvas</b>
+        </button>
     </div>
 
     <script> /*This section has all the JavaScript*/
@@ -81,6 +92,7 @@
 
         //Get the coordinates
         let currentPolygon = [];
+        let savedZones = [];
         canvas.addEventListener("mousedown", function(event){
             let clickX = event.offsetX;
             let clickY = event.offsetY;
@@ -138,12 +150,19 @@
                     ctx.fill();
                     
                     ctx.globalAlpha = 1;
+                    //Add this current Zone to the savedZones array
+                    savedZones.push({zoneType: currentZoneColour, coordinates: currentPolygon});
                     currentPolygon = [];
                     return;
                 }
             }
-
         })
+        //Reset button logic
+        const resetButton= document.getElementById("resetButton");
+
+        //Save button logic
+        const saveButton= document.getElementById("saveButton");
+
 
         
     </script>
