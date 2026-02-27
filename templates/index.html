@@ -38,7 +38,6 @@
 </head>
 <!--Body contains the main HTML section-->
 <body> 
-    <h1>Cattainer</h1>
     <p>Draw your <b>zones</b> below.</p>
 
     <canvas id="myCanvas" width="320" height="320"></canvas>
@@ -159,6 +158,12 @@
         })
         //Reset button logic
         const resetButton= document.getElementById("resetButton");
+        resetButton.addEventListener("click", function(event){
+            savedZones = [];
+            currentPolygon = [];
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+        })
 
         //Save button logic
         const saveButton= document.getElementById("saveButton");
