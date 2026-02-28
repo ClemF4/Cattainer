@@ -27,11 +27,13 @@
             padding: 8px;
             border-radius: 8px;
             width: 320px;
+            -webkit-text-stroke: 0.5px;
+            -webkit-text-stroke-color: black;
+            text-shadow: 2px 2px 2px black;
         }
         button {
             padding: 12px 16px;
             border-radius: 8px;
-            
         }
     </style>    
 
@@ -77,6 +79,16 @@
         let currentZoneColour = "red";
         const zoneMenu = document.getElementById("zoneMenu");
         const controlsDiv = document.querySelector(".controls");
+
+        //Matches the current zone value to the div colour (works on browser refresh)
+        if(zoneMenu.value==="red"){
+                controlsDiv.style.backgroundColor = "red";
+                currentZoneColour="red";
+        } else if(zoneMenu.value==="amber"){
+                controlsDiv.style.backgroundColor = "rgb(221, 175, 10)";
+                currentZoneColour="amber";
+        }
+
         zoneMenu.addEventListener("change", function(event) {
             currentZoneColour = event.target.value;
             console.log("Pen colour is: " + currentZoneColour);
@@ -120,7 +132,7 @@
             }
 
             ctx.fillStyle = canvasColour;
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 2;
             ctx.strokeStyle = canvasColour;
             ctx.fillRect(clickX, clickY, 5, 5);
             if(currentPolygon.length>1){
@@ -132,7 +144,7 @@
                 
                 //Finishing the polygon logic
                 let firstPoint = currentPolygon[0];
-                if(Math.abs(clickX-firstPoint.x) < 20 && Math.abs(clickY-firstPoint.y) < 20){
+                if(Math.abs(clickX-firstPoint.x) < 15 && Math.abs(clickY-firstPoint.y) < 15){
                     console.log("Finishing the polygon");
                     clickX = firstPoint.x;
                     clickY = firstPoint.y;
