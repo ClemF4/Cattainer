@@ -71,3 +71,6 @@ core
 
 #venv
 /venv
+
+#saved zones
+*.json

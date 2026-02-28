@@ -34,6 +34,8 @@
         button {
             padding: 12px 16px;
             border-radius: 8px;
+            width: 130px;
+            height: 50px;
         }
     </style>    
 
@@ -179,9 +181,43 @@
 
         //Save button logic
         const saveButton= document.getElementById("saveButton");
+        saveButton.addEventListener("click", function(event){
+            if(savedZones.length === 0){ //Make sure theres at least one zone
+                console.log("Cannot save since zone is empty");
+                return;
+            }
 
+            console.log("Packaging these zones for python: ", savedZones);
 
-        
+            //Use fetch API to send 
+            fetch("/saved_zones", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(savedZones)
+            })
+            .then(function(response){
+                if(response.ok){
+                    console.log("Zones Saved");
+                    saveButton.style.backgroundColor = "greenyellow";
+                    saveButton.innerHTML = "<b>Saved</b>";
+                } else{
+                    console.log("Server Error (.then function returned error)");
+                    saveButton.style.backgroundColor = "red";
+                    saveButton.innerHTML = "<b>Error</b>";
+                }
+                setTimeout(function() { //Resets the colour of the save button after 0.5 sec
+                    saveButton.style.backgroundColor = "";
+                    saveButton.innerHTML = "<b>Save Zones</b?";
+                }, 500)
+            })
+            .catch(function(error){
+                console.error("Network Error: ", error);
+                alert("Could not connect to the Pi");
+            })
+        })
+
     </script>
 </body>
 </html> 
