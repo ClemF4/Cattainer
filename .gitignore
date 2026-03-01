@@ -74,3 +74,4 @@ core
 
 #saved zones
 *.json
+*.ctl
