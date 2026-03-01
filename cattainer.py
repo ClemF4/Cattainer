@@ -1,71 +1,45 @@
 import cv2
 import time
 import os
-from ultralytics import YOLO
 
-# --- CONFIGURATION ---
-MODEL_PATH = 'model_edgetpu.tflite'
-TEST_MEDIA = 'tests/test_video.mp4'
+# Configuration
 OUTPUT_DIR = 'output_frames' 
-# ---------------------
 
 def run_test():
-    print(f"--- STARTING IMAGE TEST ---")
-    
-    # 1. Load Model
-    if not os.path.exists(MODEL_PATH):
-        print(f"❌ Error: Model not found at {MODEL_PATH}")
-        return
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+        print(f"Created directory: {OUTPUT_DIR}")
 
-    try:
-        print(f"Loading Model: {MODEL_PATH}...")
-        model = YOLO(MODEL_PATH, task='detect') 
-        print(f"✅ Model Loaded!")
-    except Exception as e:
-        print(f"❌ Error Loading Model: {e}")
-        return
+    print("Opening camera...")
+    cap = cv2.VideoCapture(0)
 
-    # 2. Open Video
-    cap = cv2.VideoCapture(TEST_MEDIA)
     if not cap.isOpened():
-        print(f"❌ Error: Could not open video: {TEST_MEDIA}")
+        print("Error: Could not open the camera. Check your USB connection!")
         return
 
-    # Create output folder
-    if os.path.exists(OUTPUT_DIR):
-        import shutil
-        shutil.rmtree(OUTPUT_DIR) # Clean old run
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    
-    print(f"Saving detected frames to: {OUTPUT_DIR}/")
+    print("Warming up camera sensor...")
+    time.sleep(2)
 
-    frame_count = 0
-    saved_count = 0
-    
-    while True:
+    frames_to_capture = 5
+    print(f"Capturing {frames_to_capture} frames...")
+
+    for i in range(frames_to_capture):
         ret, frame = cap.read()
-        if not ret:
-            break
-
-        # 3. RUN INFERENCE
-        # We process every frame to test speed, but only save some
-        results = model(frame, imgsz=320, verbose=False)
-
-        frame_count += 1
         
-        # 4. Save Image Logic
-        # Save the first frame, and then every 30th frame (approx every 1 second)
-        if frame_count == 1 or frame_count % 30 == 0:
-            # Draw boxes
-            annotated_frame = results[0].plot()
+        if not ret:
+            print(f"Error: Failed to grab frame {i}.")
+            break
             
-            filename = f"{OUTPUT_DIR}/frame_{frame_count:04d}.jpg"
-            cv2.imwrite(filename, annotated_frame)
-            saved_count += 1
-            print(f"Saved {filename} | Cats found: {len(results[0].boxes)}")
+        # Construct the file path and save the image
+        filename = os.path.join(OUTPUT_DIR, f"test_frame_{i}.jpg")
+        cv2.imwrite(filename, frame)
+        print(f"Saved: {filename}")
+        
+        # Wait half a second before taking the next picture
+        time.sleep(0.5)
 
     cap.release()
-    print(f"\n✅ DONE! Saved {saved_count} images to '{OUTPUT_DIR}' folder.")
+    print("Test complete. Camera released.")
 
 if __name__ == "__main__":
     run_test()
