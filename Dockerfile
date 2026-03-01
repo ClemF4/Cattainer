@@ -1,29 +1,33 @@
-# 1. Base Image: Match Host (Debian Bookworm)
+# Base image which matches the host (Pi) 
 FROM python:3.11-slim-bookworm
 
-# 2. Install System Dependencies
-# We need 'usbutils' and 'libgl' for OpenCV/Coral
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     curl \
     usbutils \
     libgl1-mesa-glx \
     libglib2.0-0 \
     libusb-1.0-0 \
+    dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
-# 3. Setup Work Directory
+# Setup working directory
 WORKDIR /app
 
-# 4. Install Python Libraries
+# Install python libraries
 COPY requirements.txt .
-# We use --break-system-packages to force installation
+# Used --break-system-packages to force installation
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt
 
-# 5. Copy Code
+# Copy code
 COPY . .
 
-# 6. Create data directory
+# Create data directory
 RUN mkdir -p /data
 
-# 7. Run
-CMD ["python", "cattainer.py"]
+# This cleans up the windows line endings into linux line endings (since development was on windows)
+RUN dos2unix startup.sh 
+# Make startup script executable
+RUN chmod +x startup.sh
+# Run the startup script
+CMD ["./startup.sh"]
