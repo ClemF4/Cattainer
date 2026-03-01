@@ -1,9 +1,16 @@
 # Base image which matches the host (Pi) 
 FROM python:3.11-slim-bookworm
 
+# Inject official Pi repository to get the latest versions of the required libraries
+RUN apt-get update && apt-get install -y wget gnupg \
+    && wget -qO - https://archive.raspberrypi.com/debian/raspberrypi.gpg.key | gpg --dearmor -o /usr/share/keyrings/raspberrypi-archive-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/raspberrypi-archive-keyring.gpg] http://archive.raspberrypi.com/debian/ bookworm main" > /etc/apt/sources.list.d/raspi.list
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    curl \
+    python3-picamera2 \
+    libcamera-ipa \
+    libcamera-tools \
     usbutils \
     libgl1-mesa-glx \
     libglib2.0-0 \
