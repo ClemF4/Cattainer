@@ -20,6 +20,11 @@ def saved_zones():
         json.dump(zones_data, file, indent=4)
     return jsonify({"status": "success"}), 200
 
+@app.route('/triggerSnapshot', methods=['POST'])
+def trigger_snapshot():
+    with open('trigger_snapshot.flag', 'w') as file:
+        pass
+    return jsonify({"status": "success"}), 200
 
 @app.after_request
 def add_header(response):
