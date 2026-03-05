@@ -222,6 +222,25 @@
             })
         })
 
+        //Refresh Button Logic
+        const refreshButton= document.getElementById("refreshButton");
+        refreshButton.addEventListener("click", function(event){
+            //Creates a new file called triggerSnapshot on the Pi
+            fetch("/triggerSnapshot", {
+                method: "POST",
+            })
+            //Set a 1 sec timeout to allow the Pi to save the image
+            setTimeout(function(){
+                //Loading the new image with a timestamp forces the browser to refresh the image without wiping the current zones
+                const timestamp = new Date().getTime();
+                bgImage.src = "/static/background.png?t=" + timestamp;
+
+                bgImage.onload = function() { 
+                    ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+                }
+            }, 1000);
+
+        })
     </script>
 </body>
 </html> 
