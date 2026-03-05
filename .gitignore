@@ -75,3 +75,6 @@ core
 #saved zones
 *.json
 *.ctl
+
+#flag files
+*.flag
