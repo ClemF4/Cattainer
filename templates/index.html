@@ -26,7 +26,7 @@
             margin: 20px auto;
             padding: 8px;
             border-radius: 8px;
-            width: 320px;
+            width: 444px;
             -webkit-text-stroke: 0.5px;
             -webkit-text-stroke-color: black;
             text-shadow: 2px 2px 2px black;
@@ -34,7 +34,7 @@
         button {
             padding: 12px 16px;
             border-radius: 8px;
-            width: 130px;
+            width: 150px;
             height: 50px;
         }
     </style>    
@@ -44,7 +44,7 @@
 <body> 
     <p>Draw your <b>zones</b> below.</p>
 
-    <canvas id="myCanvas" width="320" height="320"></canvas>
+    <canvas id="myCanvas" width="640" height="480"></canvas>
 
     <div class="controls">
         <label for="zoneMenu"><b>Choose a Zone</b></label>
@@ -60,6 +60,9 @@
         </button>
         <button id="resetButton">
             <b>Reset Canvas</b>
+        </button>
+        <button id="refreshButton">
+            <b>Refresh Image</b>
         </button>
     </div>
 
