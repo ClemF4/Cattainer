@@ -115,9 +115,18 @@ def catDetect(picam2, model):
 
 #Load the zones from the .json into a variable
 def loadZones():
-    with open("saved_zones.json", "r") as file:
-        zonesData = json.load(file)
-    return zonesData
+    logging.info("Cattainer: Loading saved_zones.json")
+    try:
+        with open("saved_zones.json", "r") as file:
+            zonesData = json.load(file)
+            if zonesData == 0:
+                logging.error("Cattainer: No Zones found, please draw zones in the web UI")
+                sys.exit(1)
+            logging.info(f"Cattainer: Loaded {len(zonesData)} zones successfully")
+            return zonesData
+    except FileNotFoundError:
+        logging.error("Cattainer: saved_zones.json file not found, please redraw the zones")
+        sys.exit(1)
 
 
 #Compare the current cat position to the zones
@@ -163,7 +172,6 @@ if __name__ == "__main__":
     #Initialise Camera & TPU
     picam2 = initialiseCamera()
     model = initaliseTPU()
-    
     #Read the saved_zones.json
     zonesData = loadZones()
     #Check the time that the json file was last edited
