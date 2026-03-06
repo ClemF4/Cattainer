@@ -3,8 +3,10 @@ import cv2
 import os
 import sys
 import logging
+import numpy as np
 from picamera2 import Picamera2
 from ultralytics import YOLO
+
 
 OUTPUT_DIR = 'output_frames'
 
@@ -36,10 +38,22 @@ def initialiseCamera():
 def initaliseTPU():
     logging.info("Cattainer: Checking if the TPU is connected")
     try:
-        #If the Coral is disconnected then it'll throw an error
+        #If the model isnt there this will throw an error
         model = YOLO("model_edgetpu.tflite")
+        logging.info("Cattainer: YOLO model has been loaded (Device unsure)")
+        #Run dummy inference to ensure that the model is on the Coral & not the CPU
+        dummyFrame = np.zeros((480,640,3), dtype=np.uint8)
+        startTime = time.time()
+        model(dummyFrame)
+        endTime = time.time()
+        totalTime = endTime - startTime
+        # Check whether the time taken was long, since this indicated whether it was CPU or TPU
+        if totalTime>500:
+            logging.error("Cattainer: Model was loaded onto the CPU not the Coral")
+            sys.exit(1)
         logging.info("Cattainer: YOLO model has been correctly initalised on the TPU")
         return model
+    
     except Exception as e:
         logging.error("Cattainer: Unable to load model, check whether the Coral has had a brownout, unplug & replug")
         logging.error(f"Cattainer: Model error details: {e}")
@@ -54,6 +68,6 @@ if __name__ == "__main__":
     model = initaliseTPU()
 
     #Infinite Loop
-    while(True):
-        catDetect(picam2, model)
+    #while(True):
+        #catDetect(picam2, model)
         
