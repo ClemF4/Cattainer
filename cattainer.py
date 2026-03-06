@@ -15,25 +15,45 @@ logging.basicConfig(
 )
 
 def initialiseCamera():
-    logging.info("Checking for connected cameras")
+    logging.info("Cattainer: Checking for connected cameras")
     try:
         #If the camera isnt connected this line will cause an error & go straight to except
         picam2 = Picamera2()
-        logging.info("Camera found & initalised successfully")
+        #picam2.create_video_configuration()
+        #picam2.configure
+        picam2.start()
+        #Sleep the camera for 2 seconds while it calculates the lighting
+        time.sleep(2)
+        logging.info("Cattainer: Camera found & initalised successfully")
         return picam2
 
     except Exception as e:
         #Add these errors to the log if the camera is disconnected
-        logging.error("Camera not found or unable to initalise")
-        logging.error(f"Camera error details: {e}")
+        logging.error("Cattainer: Camera not found or unable to initalise")
+        logging.error(f"Cattainer: Camera error details: {e}")
         sys.exit(1)
 
-def catDetect():
+def initaliseTPU():
+    logging.info("Cattainer: Checking if the TPU is connected")
+    try:
+        #If the Coral is disconnected then it'll throw an error
+        model = YOLO("model_edgetpu.tflite")
+        logging.info("Cattainer: YOLO model has been correctly initalised on the TPU")
+        return model
+    except Exception as e:
+        logging.error("Cattainer: Unable to load model, check whether the Coral has had a brownout, unplug & replug")
+        logging.error(f"Cattainer: Model error details: {e}")
+        sys.exit(1)
+
+def catDetect(picam2, model):
     return
 
 if __name__ == "__main__":
-    
-    initialiseCamera()
-    
+    #Initialise Camera & TPU
+    picam2 = initialiseCamera()
+    model = initaliseTPU()
 
-    
+    #Infinite Loop
+    while(True):
+        catDetect(picam2, model)
+        
