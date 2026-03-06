@@ -3,17 +3,19 @@ import cv2
 import os
 import sys
 import logging
+import json
 import numpy as np
 from picamera2 import Picamera2
 from ultralytics import YOLO
 
-
+#Setup the loggers name, format, and level (change the level to warning when in production to ignore all the info logs)
 logging.basicConfig(
     filename = 'cattainer.log',
     level = logging.INFO, #This allows info logs & anything more severe into the log (change to warning when complete to only log important stuff)
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
+#Initalise the camera & close the program if there is an error
 def initialiseCamera():
     logging.info("Cattainer: Checking for connected cameras")
     try:
@@ -33,6 +35,7 @@ def initialiseCamera():
         logging.error(f"Cattainer: Camera error details: {e}")
         sys.exit(1)
 
+#Initalise the TPU & close the program if either the .tflite file doesnt exist or if the model was loaded on the CPU instead of TPU
 def initaliseTPU():
     logging.info("Cattainer: Checking if the TPU is connected")
     try:
@@ -60,6 +63,7 @@ def initaliseTPU():
         logging.error(f"Cattainer: Model error details: {e}")
         sys.exit(1)
 
+#Perform the logic of capturing a frame, running the model, and returning the correct output based on the model output
 def catDetect(picam2, model):
     #Capture a single frame
     frame = picam2.capture_array()
@@ -84,23 +88,47 @@ def catDetect(picam2, model):
 
         if confidence > 0.6:
             logging.info("Cattainer: Found an object with confidence > 60%")
-            logging.info(f"Cattainer: Bounding box center coordinates: {coords}")
-            return coords
+            classID = int(boxes.cls[0].item())
+            label = result.names[classID]
+            logging.info(f"Cattainer: Bounding box center coordinates: {coords}, Lables: {label}")
+            return coords, label
         logging.info("Cattainer: Found an object however confidence is < 60%")
     logging.info("Cattainer: No object found")
-    return 0
+    #Return a tuple or python will crash
+    return None, None
+
+def loadZones():
+    with open("saved_zones.json", "r") as file:
+        zonesData = json.load(file)
+    return zonesData
+
+#Trigger the deterrant (Ultrasonic Device)
+def triggerDeterrant():
+    return
 
 if __name__ == "__main__":
     #Initialise Camera & TPU
     picam2 = initialiseCamera()
     model = initaliseTPU()
     
+    #Read the saved_zones.json
+    zonesData = loadZones()
+    #Check the time that the json file was last edited
+    lastKnownTime = os.path.getmtime("saved_zones.json")
+
     #Infinite Loop
     while(True):
-        coords = catDetect(picam2, model) #TESTING THE FUNCTION ONCE, NOT IN A LOOP
+        #Check the last time that the zones were loaded
+        currentKnownTime = os.path.getmtime("saved_zones.json")
+        #Reload the zones if needed
+        if currentKnownTime != lastKnownTime:
+            zonesData = loadZones()
+            logging.info("Cattainer: New zones detected, reloading zones")
+            lastKnownTime = currentKnownTime
+        #Run inference
+        coords, label = catDetect(picam2, model)
         #Check if a box with confidence>60% has been found
-        if coords == 0:
+        if coords == None:
             #This restarts the while loop
             continue
-        
-        
+        #
