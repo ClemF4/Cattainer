@@ -19,8 +19,8 @@ def initialiseCamera():
     try:
         #If the camera isnt connected this line will cause an error & go straight to except
         picam2 = Picamera2()
-        #picam2.create_video_configuration()
-        #picam2.configure
+        config = picam2.create_video_configuration(main={"size": (640, 480), "format": "RGB888"})
+        picam2.configure(config)
         picam2.start()
         #Sleep the camera for 2 seconds while it calculates the lighting
         time.sleep(2)
