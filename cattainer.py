@@ -3,17 +3,26 @@ import cv2
 import os
 import sys
 import logging
+from logging.handlers import RotatingFileHandler
 import json
 import numpy as np
 from picamera2 import Picamera2
 from ultralytics import YOLO
 
+#Create a loghandler which makes sure the log doesnt become huge after days of this script running 
+logHandler = RotatingFileHandler(
+    filename='cattainer.log',
+    maxBytes=5 * 1024 * 1024, #5 megabytes (5 * 1024 kb * 1024 bytes)
+    backupCount=2
+)
+
 #Setup the loggers name, format, and level (change the level to warning when in production to ignore all the info logs)
 logging.basicConfig(
-    filename = 'cattainer.log',
     level = logging.INFO, #This allows info logs & anything more severe into the log (change to warning when complete to only log important stuff)
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[logHandler]
 )
+
 
 #Initalise the camera & close the program if there is an error
 def initialiseCamera():
@@ -34,6 +43,7 @@ def initialiseCamera():
         logging.error("Cattainer: Camera not found or unable to initalise")
         logging.error(f"Cattainer: Camera error details: {e}")
         sys.exit(1)
+
 
 #Initalise the TPU & close the program if either the .tflite file doesnt exist or if the model was loaded on the CPU instead of TPU
 def initaliseTPU():
@@ -62,6 +72,7 @@ def initaliseTPU():
         logging.error("Cattainer: Unable to load model, check whether the Coral has had a brownout, unplug & replug")
         logging.error(f"Cattainer: Model error details: {e}")
         sys.exit(1)
+
 
 #Perform the logic of capturing a frame, running the model, and returning the correct output based on the model output
 def catDetect(picam2, model):
@@ -101,14 +112,16 @@ def catDetect(picam2, model):
         logging.info("Cattainer: Did not find any objects with confidence > 60%")
     return highConfBoxes
 
+
 #Load the zones from the .json into a variable
 def loadZones():
     with open("saved_zones.json", "r") as file:
         zonesData = json.load(file)
     return zonesData
 
+
 #Compare the current cat position to the zones
-def zoneLogic(targets, zoneData):
+def zoneLogic(targets, zonesData):
     #Pull the array & label of each box from out of the tuple one at a time
     for coords, label in targets:
         #Find the center x,y coords of the cat
@@ -123,10 +136,28 @@ def zoneLogic(targets, zoneData):
                 xVal = point["x"]
                 yVal = point["y"]
                 formattedPoints.append([xVal, yVal])
+            #Format these points into a format which cv2.pointPolygonTest accepts as an input
+            polygonArray = np.array(formattedPoints, dtype=np.int32)
+            #Use opencv's function, this checks whether the catCenter points are within polygonArray, the 3rd argument is set to false since we dont care about the distance from the point to the polygon
+            isInside = cv2.pointPolygonTest(polygonArray, catCenter, False)
+            #Returns 1 if inside, 0 if on border, and -1 if outside
+            if isInside >= 0:
+                logging.info(f"Cattainer: The {label} is inside the: {zoneType}")
+                if zoneType == "red":
+                    #If the cat is in the red zone trigger deterrant
+                    triggerDeterrant()
+                    break #Stops function immediatly
+                elif zoneType == "amber" and label == "cat_jumping":
+                    #If the cat is in the amber zone & is jumping trigger deterrant
+                    triggerDeterrant()
+                    break
+                
 
 #Trigger the deterrant (Ultrasonic Device)
 def triggerDeterrant():
+    logging.info("Cattainer: TRIGGERING DETERRANT")
     return
+
 
 if __name__ == "__main__":
     #Initialise Camera & TPU
