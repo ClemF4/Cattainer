@@ -81,21 +81,25 @@ def catDetect(picam2, model):
     result = output[0]
     #Find the bounding boxes
     boxes = result.boxes
+    #Create an empty array which will be returned to main
+    highConfBoxes = []
     #Check if the model actually found anything 
     if len(boxes)>0:
-        confidence = boxes.conf[0].item()
-        coords = boxes.xywh[0].tolist()
-
-        if confidence > 0.6:
-            logging.info("Cattainer: Found an object with confidence > 60%")
-            classID = int(boxes.cls[0].item())
-            label = result.names[classID]
-            logging.info(f"Cattainer: Bounding box center coordinates: {coords}, Lables: {label}")
-            return coords, label
-        logging.info("Cattainer: Found an object however confidence is < 60%")
-    logging.info("Cattainer: No object found")
-    #Return a tuple or python will crash
-    return None, None
+        #Iterate through every box & check if they are high confidence
+        for box in boxes:
+            confidence = box.conf.item()
+            if confidence > 0.6:
+                logging.info("Cattainer: Found an object with confidence > 60%")
+                #Extract the coords
+                coords = box.xywh[0].tolist()
+                #Extract the class
+                classID = int(box.cls.item())
+                label = result.names[classID]
+                logging.info(f"Cattainer: Bounding box center coordinates: {coords}, Lables: {label}")
+                highConfBoxes.append((coords, label))
+    if len(highConfBoxes) == 0:    
+        logging.info("Cattainer: Did not find any objects with confidence > 60%")
+    return highConfBoxes
 
 def loadZones():
     with open("saved_zones.json", "r") as file:
