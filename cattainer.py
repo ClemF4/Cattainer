@@ -101,10 +101,28 @@ def catDetect(picam2, model):
         logging.info("Cattainer: Did not find any objects with confidence > 60%")
     return highConfBoxes
 
+#Load the zones from the .json into a variable
 def loadZones():
     with open("saved_zones.json", "r") as file:
         zonesData = json.load(file)
     return zonesData
+
+#Compare the current cat position to the zones
+def zoneLogic(targets, zoneData):
+    #Pull the array & label of each box from out of the tuple one at a time
+    for coords, label in targets:
+        #Find the center x,y coords of the cat
+        catCenter = (coords[0], coords[1])
+        for zone in zonesData:
+            #Find the zone type & extract the raw coordinates of this zone
+            zoneType = zone["zoneType"]
+            rawPoints = zone["coordinates"]
+            #Format the points (remove the "x" & "y" and just keep the numbers)
+            formattedPoints =[]
+            for point in rawPoints:
+                xVal = point["x"]
+                yVal = point["y"]
+                formattedPoints.append([xVal, yVal])
 
 #Trigger the deterrant (Ultrasonic Device)
 def triggerDeterrant():
@@ -130,9 +148,8 @@ if __name__ == "__main__":
             logging.info("Cattainer: New zones detected, reloading zones")
             lastKnownTime = currentKnownTime
         #Run inference
-        coords, label = catDetect(picam2, model)
+        targets = catDetect(picam2, model)
         #Check if a box with confidence>60% has been found
-        if coords == None:
-            #This restarts the while loop
-            continue
-        #
+        if len(targets) == 0:
+            continue #This restarts the while loop
+        zoneLogic(targets, zonesData)
