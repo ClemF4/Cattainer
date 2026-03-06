@@ -41,12 +41,15 @@ def initaliseTPU():
         logging.info("Cattainer: YOLO model has been loaded (Device unsure)")
         #Run dummy inference to ensure that the model is on the Coral & not the CPU
         dummyFrame = np.zeros((480,640,3), dtype=np.uint8)
+        #Run model once to build the YOLO pipeline (since the first run always takes a long time)
+        model(dummyFrame)
+        #Now time how long inference takes once the pipeline has already been build, this gives an accurate time
         startTime = time.time()
         model(dummyFrame)
         endTime = time.time()
         totalTime = endTime - startTime
         # Check whether the time taken was long, since this indicated whether it was CPU or TPU
-        if totalTime>500:
+        if totalTime>0.5:
             logging.error("Cattainer: Model was loaded onto the CPU not the Coral")
             sys.exit(1)
         logging.info("Cattainer: YOLO model has been correctly initalised on the TPU")
@@ -60,7 +63,6 @@ def initaliseTPU():
 def catDetect(picam2, model):
     #Capture a single frame
     frame = picam2.capture_array()
-    cv2.imwrite("testing.png", frame) #testing frame
     #Check if the flag file is present
     if os.path.exists("trigger_snapshot.flag"):
         logging.info("Cattainer: snapshot flag is present, saving current frame to /static/background.png")
@@ -77,7 +79,6 @@ def catDetect(picam2, model):
     boxes = result.boxes
     #Check if the model actually found anything 
     if len(boxes)>0:
-        logging.info("Cattainer: Found an object (Confidence Unknown)")
         confidence = boxes.conf[0].item()
         coords = boxes.xywh[0].tolist()
 
@@ -85,7 +86,7 @@ def catDetect(picam2, model):
             logging.info("Cattainer: Found an object with confidence > 60%")
             logging.info(f"Cattainer: Bounding box center coordinates: {coords}")
             return coords
-        logging.info("Cattainer: Objects confidence is < 60%")
+        logging.info("Cattainer: Found an object however confidence is < 60%")
     logging.info("Cattainer: No object found")
     return 0
 
@@ -101,5 +102,5 @@ if __name__ == "__main__":
         if coords == 0:
             #This restarts the while loop
             continue
-
+        
         
