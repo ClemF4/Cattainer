@@ -8,8 +8,6 @@ from picamera2 import Picamera2
 from ultralytics import YOLO
 
 
-OUTPUT_DIR = 'output_frames'
-
 logging.basicConfig(
     filename = 'cattainer.log',
     level = logging.INFO, #This allows info logs & anything more severe into the log (change to warning when complete to only log important stuff)
@@ -39,7 +37,7 @@ def initaliseTPU():
     logging.info("Cattainer: Checking if the TPU is connected")
     try:
         #If the model isnt there this will throw an error
-        model = YOLO("model_edgetpu.tflite")
+        model = YOLO("model_edgetpu.tflite", task="detect")
         logging.info("Cattainer: YOLO model has been loaded (Device unsure)")
         #Run dummy inference to ensure that the model is on the Coral & not the CPU
         dummyFrame = np.zeros((480,640,3), dtype=np.uint8)
@@ -60,14 +58,48 @@ def initaliseTPU():
         sys.exit(1)
 
 def catDetect(picam2, model):
-    return
+    #Capture a single frame
+    frame = picam2.capture_array()
+    cv2.imwrite("testing.png", frame) #testing frame
+    #Check if the flag file is present
+    if os.path.exists("trigger_snapshot.flag"):
+        logging.info("Cattainer: snapshot flag is present, saving current frame to /static/background.png")
+        #Save the frame to /static/background.png
+        correctedFrame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        cv2.imwrite("static/background.png", correctedFrame)
+        os.remove("trigger_snapshot.flag")
+
+    #Run inference on the frame
+    output = model(frame, imgsz=320, )
+    #Extract the first output as our result since YOLO returns a list 
+    result = output[0]
+    #Find the bounding boxes
+    boxes = result.boxes
+    #Check if the model actually found anything 
+    if len(boxes)>0:
+        logging.info("Cattainer: Found an object (Confidence Unknown)")
+        confidence = boxes.conf[0].item()
+        coords = boxes.xywh[0].tolist()
+
+        if confidence > 0.6:
+            logging.info("Cattainer: Found an object with confidence > 60%")
+            logging.info(f"Cattainer: Bounding box center coordinates: {coords}")
+            return coords
+        logging.info("Cattainer: Objects confidence is < 60%")
+    logging.info("Cattainer: No object found")
+    return 0
 
 if __name__ == "__main__":
     #Initialise Camera & TPU
     picam2 = initialiseCamera()
     model = initaliseTPU()
-
+    
     #Infinite Loop
-    #while(True):
-        #catDetect(picam2, model)
+    while(True):
+        coords = catDetect(picam2, model) #TESTING THE FUNCTION ONCE, NOT IN A LOOP
+        #Check if a box with confidence>60% has been found
+        if coords == 0:
+            #This restarts the while loop
+            continue
+
         
