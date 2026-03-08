@@ -35,14 +35,14 @@ def saved_zones():
             return jsonify({"status": "error, please input zones correctly"}), 400        
 
     #Save the zones into a .json file
-    with open('saved_zones.json', 'w') as file:
+    with open('data/saved_zones.json', 'w') as file:
         json.dump(zones_data, file, indent=4)
     return jsonify({"status": "success"}), 200
 
 #Route the flag file here, it creates a new empty file on my system called trigger_snapshot.flag
 @app.route('/triggerSnapshot', methods=['POST'])
 def trigger_snapshot():
-    with open('trigger_snapshot.flag', 'w') as file:
+    with open('data/trigger_snapshot.flag', 'w') as file:
         pass
     return jsonify({"status": "success"}), 200
 

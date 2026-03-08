@@ -79,7 +79,7 @@ def catDetect(picam2, model):
     #Capture a single frame
     frame = picam2.capture_array()
     #Check if the flag file is present
-    if os.path.exists("trigger_snapshot.flag"):
+    if os.path.exists("data/trigger_snapshot.flag"):
         logging.info("Cattainer: snapshot flag is present, saving current frame to /static/background.png")
         #Save the frame to /static/background.png
         correctedFrame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
