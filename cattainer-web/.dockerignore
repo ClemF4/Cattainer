@@ -1,0 +1,27 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# VSCode settings
+.vscode/
+
+# Environment variables
+.env
+
+# Output data or media
+runs/
+*.mp4
+*.jpg
+core
+saved_zones.json
+
+# Docker and Setup files
+Dockerfile
+docker-compose.yml
+.dockerignore
+setup.sh
