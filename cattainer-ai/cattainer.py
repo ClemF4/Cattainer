@@ -117,7 +117,7 @@ def catDetect(picam2, model):
 def loadZones():
     logging.info("Cattainer: Loading saved_zones.json")
     try:
-        with open("saved_zones.json", "r") as file:
+        with open("data/saved_zones.json", "r") as file:
             zonesData = json.load(file)
             if zonesData == 0:
                 logging.error("Cattainer: No Zones found, please draw zones in the web UI")
