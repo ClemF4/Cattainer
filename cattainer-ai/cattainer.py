@@ -80,11 +80,11 @@ def catDetect(picam2, model):
     frame = picam2.capture_array()
     #Check if the flag file is present
     if os.path.exists("data/trigger_snapshot.flag"):
-        logging.info("Cattainer: snapshot flag is present, saving current frame to /static/background.png")
-        #Save the frame to /static/background.png
+        logging.info("Cattainer: snapshot flag is present, saving current frame to data/static/background.png")
+        #Save the frame to data/static/background.png
         correctedFrame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        cv2.imwrite("static/background.png", correctedFrame)
-        os.remove("trigger_snapshot.flag")
+        cv2.imwrite("data/static/background.png", correctedFrame)
+        os.remove("data/trigger_snapshot.flag")
 
     #Run inference on the frame
     output = model(frame, imgsz=320, )
@@ -175,12 +175,12 @@ if __name__ == "__main__":
     #Read the saved_zones.json
     zonesData = loadZones()
     #Check the time that the json file was last edited
-    lastKnownTime = os.path.getmtime("saved_zones.json")
+    lastKnownTime = os.path.getmtime("data/saved_zones.json")
 
     #Infinite Loop
     while(True):
         #Check the last time that the zones were loaded
-        currentKnownTime = os.path.getmtime("saved_zones.json")
+        currentKnownTime = os.path.getmtime("data/saved_zones.json")
         #Reload the zones if needed
         if currentKnownTime != lastKnownTime:
             zonesData = loadZones()
