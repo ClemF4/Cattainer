@@ -1,10 +1,7 @@
-#"""
 from flask import Flask, render_template, jsonify, request
-from flask_cors import CORS  # installed flask-cors to handle security conflicts between browsers and the server
 import json
 
 app = Flask(__name__)
-CORS(app)  # This line adds something to the header telling my browser that this site is safe
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True #this line is for development & tells the browser to auto reload after changes to html
 
@@ -32,6 +29,5 @@ def add_header(response):
     return response
 
 if __name__ == "__main__":
-    app.run(debug=True)
-#"""
+    app.run()
 
