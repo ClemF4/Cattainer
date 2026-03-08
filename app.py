@@ -3,7 +3,7 @@ import json
 
 app = Flask(__name__)
 
-app.config['TEMPLATES_AUTO_RELOAD'] = True #this line is for development & tells the browser to auto reload after changes to html
+#app.config['TEMPLATES_AUTO_RELOAD'] = True #this line is for development & tells the browser to auto reload after changes to html
 
 @app.route("/")
 def index():
@@ -13,6 +13,21 @@ def index():
 @app.route('/saved_zones', methods=['POST'])
 def saved_zones():
     zones_data = request.get_json()
+    #Make sure that the data is in the correct format 
+    if not isinstance(zones_data, list):
+        return jsonify({"status": "error, please input zones correctly"}), 400
+    for zone in zones_data:
+        #Check if each zone contains a zoneType
+        if "zoneType" not in zone:
+            return jsonify({"status": "error, please input zones correctly"}), 400
+        #Check if each zone containers a coordinates list
+        if "coordinates" not in zone:
+            return jsonify({"status": "error, please input zones correctly"}), 400
+        #Check if zoneType is either red or amber
+        if zone["zoneType"] != "red" and zone["zoneType"] != "amber":
+            return jsonify({"status": "error, please input zones correctly"}), 400        
+
+    #Save the zones into a .json file
     with open('saved_zones.json', 'w') as file:
         json.dump(zones_data, file, indent=4)
     return jsonify({"status": "success"}), 200
