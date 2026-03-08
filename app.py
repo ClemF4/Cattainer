@@ -23,6 +23,9 @@ def saved_zones():
         #Check if each zone containers a coordinates list
         if "coordinates" not in zone:
             return jsonify({"status": "error, please input zones correctly"}), 400
+        #Limit the number of points in the .json to defend against DoS attacks
+        if len(zone["coordinates"]) > 50:
+            return jsonify({"status": "error, please have less points in your zones"}), 400
         #Check if zoneType is either red or amber
         if zone["zoneType"] != "red" and zone["zoneType"] != "amber":
             return jsonify({"status": "error, please input zones correctly"}), 400        
