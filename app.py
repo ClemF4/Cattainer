@@ -16,6 +16,10 @@ def saved_zones():
     #Make sure that the data is in the correct format 
     if not isinstance(zones_data, list):
         return jsonify({"status": "error, please input zones correctly"}), 400
+    #Make sure zones_data contains less than 10 zones
+    if len(zones_data) > 10:
+            return jsonify({"status": "error, your zone file is too big, reduce the number & size of zones"}), 400
+    
     for zone in zones_data:
         #Check if each zone contains a zoneType
         if "zoneType" not in zone:
