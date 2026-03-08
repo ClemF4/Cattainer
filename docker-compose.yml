@@ -3,11 +3,10 @@ version: '3.8'
 services:
   web:
     build: 
-      context: ./cattainer-web
-    
+      context: ./cattainer-web 
     ports:
-      -"5000:5000"
+      - "5000:5000" 
     volumes:
-      - ./cattainer-data:/usr/local/app/data
+      - ./cattainer-data:/usr/local/app/data 
     
     restart: unless-stopped
