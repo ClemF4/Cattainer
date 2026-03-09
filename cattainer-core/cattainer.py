@@ -27,6 +27,7 @@ logging.basicConfig(
 
 #Initalise the camera & close the program if there is an error
 def initialiseCamera():
+    #In future add redundancy so that it checks the architecture of the camera, then uses picamera if its a pi & something else if it isnt
     logging.info("Cattainer: Checking for connected cameras")
     try:
         #If the camera isnt connected this line will cause an error & go straight to except

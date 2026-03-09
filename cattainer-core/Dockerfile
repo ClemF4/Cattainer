@@ -11,18 +11,17 @@ COPY requirements.txt .
 
 #Install requirements.txt & perform all the commands in my setup.sh script https://docs.docker.com/reference/dockerfile/#run
 RUN <<EOF
-#Add raspberry pis repository to debians source list
-apt-get update && apt-get install -y gnupg
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 82B129927FA3303E
+#Connect raspberry pis repository to debians source list
+apt-get update && apt-get install -y wget gnupg && \
+wget -qO - https://archive.raspberrypi.org/debian/raspberrypi.gpg.key | gpg --dearmor -o /etc/apt/trusted.gpg.d/raspberrypi-archive-keyring.gpg && \
 echo "deb http://archive.raspberrypi.org/debian/ bookworm main" > /etc/apt/sources.list.d/raspi.list
-apt-get update
 
 #Install requirements.txt
 pip install --no-cache-dir -r requirements.txt
 apt-get update
 
 #Install cv2 graphics library & picamera2
-apt-get install -y libgl1 python3-picamera2
+apt-get install -y libgl1 python3-picamera2 libusb-1.0-0 libudev1
 
 #Install the TPU drivers
 wget https://github.com/feranick/libedgetpu/releases/download/16.0TF2.19.1-1/libedgetpu-dev_16.0tf2.19.1-1.bookworm_arm64.deb
@@ -37,8 +36,8 @@ RUN useradd -m app
 #Copy source files into this new working directory & give app user permissions over them
 COPY --chown=app:app . .
 
-#Add the app user to the video & plugdev groups to give app user perms to access TPU & camera
+#Gove the app user the video & plugdev groups to give app user perms to access TPU & camera
 RUN usermod -aG video app && usermod -aG plugdev app
-USER app
+#USER app
 
 CMD ["python", "cattainer.py"]

@@ -7,11 +7,12 @@ WORKDIR /usr/local/app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-#Copy source files into this new working directory
-COPY . . 
-
 #Setup an app user so the container doesn't run as the root user
 RUN useradd app
+
+#Copy source files into this new working directory
+COPY --chown=app:app . .
+
 USER app
 
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
