@@ -32,9 +32,9 @@ rm libedgetpu-dev_16.0tf2.19.1-1.bookworm_arm64.deb
 EOF
 
 #Setup an app user so the container doesn't run as the root user
-RUN useradd app
+RUN useradd -m app
 
-#Copy source files into this new working directory
+#Copy source files into this new working directory & give app user permissions over them
 COPY --chown=app:app . .
 
 #Add the app user to the video & plugdev groups to give app user perms to access TPU & camera

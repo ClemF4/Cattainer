@@ -20,7 +20,7 @@ services:
       - "993" #This is the group which controls my gpio pins, as shown by getent group gpio
     devices:
       - "/dev/dma_heap:/dev/dma_heap" #required by picamera2
-      - "/dev/video0:/dev/video0" #camera feed
+      - "/dev/media0:/dev/media0" #camera feed
       - "/dev/bus/usb:/dev/bus/usb" #coral TPU
       - "/dev/gpiomem4:/dev/gpiomem4" #GPIO pin mem access
       - "/dev/gpiochip4:/dev/gpiochip4" #GPIO pin device access

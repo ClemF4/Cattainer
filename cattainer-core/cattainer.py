@@ -20,7 +20,8 @@ logHandler = RotatingFileHandler(
 logging.basicConfig(
     level = logging.INFO, #This allows info logs & anything more severe into the log (change to warning when complete to only log important stuff)
     format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logHandler]
+    handlers=[logHandler,
+    logging.StreamHandler(sys.stdout)]
 )
 
 
