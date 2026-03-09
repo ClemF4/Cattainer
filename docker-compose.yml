@@ -8,5 +8,16 @@ services:
       - ./cattainer-data:/usr/local/app/data 
       #Map the cattainer-data/static folder into a folder just called static in the app directory since flask only knows how to use /static/
       - ./cattainer-data/static:/usr/local/app/static
-    
+    restart: unless-stopped
+
+  core:
+    build: 
+      context: ./cattainer-core
+    volumes:
+      - ./cattainer-data:/usr/local/app/data
+      - ./cattainer-data/static:/usr/local/app/static
+    devices:
+      - "/dev/dma_heap:/dev/dma_heap" #required by picamera2
+      - "/dev/video0:/dev/video0" #camera feed
+      - "/dev/bus/usb:/dev/bus/usb" #coral TPU
     restart: unless-stopped
