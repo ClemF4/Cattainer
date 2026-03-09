@@ -13,6 +13,9 @@ RUN useradd app
 #Copy source files into this new working directory
 COPY --chown=app:app . .
 
+#Give the app user ownership of the working directory itself
+RUN chown -R app:app /usr/local/app
+
 USER app
 
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]

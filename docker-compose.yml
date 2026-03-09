@@ -26,6 +26,7 @@ services:
         - /dev/shm:/dev/shm
         # Map the TPU drivers also
         - /usr/lib/aarch64-linux-gnu/libedgetpu.so.1:/usr/lib/aarch64-linux-gnu/libedgetpu.so.1:ro
+        #THIS IS THE KEY CHANGE, MOVED THIS FROM devices into volumes
         - /dev/bus/usb:/dev/bus/usb:ro
 
       group_add:
