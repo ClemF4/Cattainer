@@ -16,6 +16,8 @@ services:
     volumes:
       - ./cattainer-data:/usr/local/app/data
       - ./cattainer-data/static:/usr/local/app/static
+    group_add:
+      - "993" #This is the group which controls my gpio pins, as shown by getent group gpio
     devices:
       - "/dev/dma_heap:/dev/dma_heap" #required by picamera2
       - "/dev/video0:/dev/video0" #camera feed

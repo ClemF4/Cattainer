@@ -25,3 +25,6 @@ Dockerfile
 docker-compose.yml
 .dockerignore
 setup.sh
+
+#Add log file to dockerignore
+.log

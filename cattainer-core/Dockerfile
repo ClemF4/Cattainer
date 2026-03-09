@@ -31,13 +31,14 @@ apt-get install -f -y
 rm libedgetpu-dev_16.0tf2.19.1-1.bookworm_arm64.deb
 EOF
 
-#Copy source files into this new working directory
-COPY . . 
-
 #Setup an app user so the container doesn't run as the root user
 RUN useradd app
+
+#Copy source files into this new working directory
+COPY --chown=app:app . .
+
 #Add the app user to the video & plugdev groups to give app user perms to access TPU & camera
-RUN usermod -aG video app && usermod -aG plugdev app && usermod -aG gpio app
+RUN usermod -aG video app && usermod -aG plugdev app
 USER app
 
 CMD ["python", "cattainer.py"]
