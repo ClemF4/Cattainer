@@ -3,5 +3,3 @@ numpy<2.0
 tflite-runtime==2.14.0
 ultralytics
 opencv-python-headless
-
-
