@@ -13,10 +13,7 @@ services:
   core:
       build: 
         context: ./cattainer-core
-      ipc: host
       privileged: true
-      network_mode: host
-      user: root # Temporarily run as root to rule out permission issues
       volumes:
         - ./cattainer-data:/usr/local/app/data
         - ./cattainer-data/static:/usr/local/app/static
