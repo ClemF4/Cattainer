@@ -13,7 +13,6 @@ services:
   core:
       build: 
         context: ./cattainer-core
-      privileged: true
       volumes:
         - ./cattainer-data:/usr/local/app/data
         - ./cattainer-data/static:/usr/local/app/static
@@ -22,7 +21,6 @@ services:
         - /dev/shm:/dev/shm
         #THIS IS THE KEY CHANGE, MOVED THIS FROM devices into volumes
         - /dev/bus/usb:/dev/bus/usb
-
       group_add:
         - "993" # gpio
         - "105" # render
@@ -66,4 +64,6 @@ services:
         - "/dev/v4l-subdev0:/dev/v4l-subdev0"
         - "/dev/v4l-subdev1:/dev/v4l-subdev1"
         - "/dev/v4l-subdev2:/dev/v4l-subdev2"
+      device_cgroup_rules:
+        - 'c 189:* rmw'
       restart: unless-stopped
