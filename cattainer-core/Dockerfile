@@ -38,6 +38,6 @@ COPY --chown=app:app . .
 
 #Gove the app user the video & plugdev groups to give app user perms to access TPU & camera
 RUN usermod -aG video app && usermod -aG plugdev app
-#USER app
+USER app
 
 CMD ["python", "cattainer.py"]
