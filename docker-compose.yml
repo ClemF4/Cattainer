@@ -13,21 +13,18 @@ services:
   core:
       build: 
         context: ./cattainer-core
-      # Give the container full hardware access
-      privileged: true
       ipc: host
+      privileged: true
       network_mode: host
       user: root # Temporarily run as root to rule out permission issues
       volumes:
         - ./cattainer-data:/usr/local/app/data
         - ./cattainer-data/static:/usr/local/app/static
         # Map udev and shared memory for libcamera/TPU handshake
-        - /run/udev:/run/udev:ro
+        - /run/udev:/run/udev
         - /dev/shm:/dev/shm
-        # Map the TPU drivers also
-        - /usr/lib/aarch64-linux-gnu/libedgetpu.so.1:/usr/lib/aarch64-linux-gnu/libedgetpu.so.1:ro
         #THIS IS THE KEY CHANGE, MOVED THIS FROM devices into volumes
-        - /dev/bus/usb:/dev/bus/usb:ro
+        - /dev/bus/usb:/dev/bus/usb
 
       group_add:
         - "993" # gpio
@@ -68,4 +65,8 @@ services:
         - "/dev/media1:/dev/media1"
         - "/dev/media2:/dev/media2"
         - "/dev/media3:/dev/media3"
+        #Needed for camera
+        - "/dev/v4l-subdev0:/dev/v4l-subdev0"
+        - "/dev/v4l-subdev1:/dev/v4l-subdev1"
+        - "/dev/v4l-subdev2:/dev/v4l-subdev2"
       restart: unless-stopped

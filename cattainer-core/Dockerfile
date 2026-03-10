@@ -24,10 +24,10 @@ apt-get update
 apt-get install -y libgl1 python3-picamera2 libusb-1.0-0 libudev1
 
 #Install the TPU drivers
-wget https://github.com/feranick/libedgetpu/releases/download/16.0TF2.19.1-1/libedgetpu-dev_16.0tf2.19.1-1.bookworm_arm64.deb
-dpkg -i libedgetpu-dev_16.0tf2.19.1-1.bookworm_arm64.deb
+wget https://github.com/feranick/libedgetpu/releases/download/16.0TF2.19.1-1/libedgetpu1-std_16.0tf2.19.1-1.bookworm_arm64.deb
+dpkg -i libedgetpu1-std_16.0tf2.19.1-1.bookworm_arm64.deb
 apt-get install -f -y 
-rm libedgetpu-dev_16.0tf2.19.1-1.bookworm_arm64.deb
+rm libedgetpu1-std_16.0tf2.19.1-1.bookworm_arm64.deb
 EOF
 
 #Setup an app user so the container doesn't run as the root user
