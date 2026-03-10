@@ -1,34 +1,69 @@
-version: '3.8'
-
 services:
-  cattainer:
-    # Build the image using the Dockerfile in this directory
-    build: .
-    container_name: Cattainer
-    restart: unless-stopped
-    
-    # Automatically exposes port 5000 on the Pi's IP
-    network_mode: host
-    
-    # Privileged is required for USB hardware access
-    privileged: true
-    
-    # Host passthrough to allow cattainer access to the Coral TPU drivers
+  web:
+    build: 
+      context: ./cattainer-web 
+    ports:
+      - "5000:5000" 
     volumes:
-          # Hardware Camera Access
-          - /dev:/dev
-          - /run/udev:/run/udev:ro 
-          
-          # Hardware Coral TPU Access
-          - /dev/bus/usb:/dev/bus/usb
-          - /usr/lib/aarch64-linux-gnu/libedgetpu.so.1.0:/usr/lib/aarch64-linux-gnu/libedgetpu.so.1.0
-          - /usr/lib/aarch64-linux-gnu/libedgetpu.so.1:/usr/lib/aarch64-linux-gnu/libedgetpu.so.1
-          
-          # File Access
-          - .:/app
-          - ./zones_data:/data
-          - /etc/localtime:/etc/localtime:ro
+      - ./cattainer-data:/usr/local/app/data 
+      #Map the cattainer-data/static folder into a folder just called static in the app directory since flask only knows how to use /static/
+      - ./cattainer-data/static:/usr/local/app/static
+    restart: unless-stopped
 
-    environment:
-        # This is production instead of development since i am using gunicorn now
-      - FLASK_ENV=production
+  core:
+      build: 
+        context: ./cattainer-core
+      volumes:
+        #Mount the shared storage from my repo into this container 
+        - ./cattainer-data:/usr/local/app/data
+        - ./cattainer-data/static:/usr/local/app/static
+        #Mount the device manager, this has details on what is plugged in currently
+        - /run/udev:/run/udev
+        #Map USB bus 3 from device to container, this is because my TPU is on bus 3 (shown by lsusb)
+        - /dev/bus/usb/003:/dev/bus/usb/003
+      #Grant the container's processes the ability to interact with these hardware interfaces
+      devices:
+        #DMA Hardware interface
+        - "/dev/dma_heap:/dev/dma_heap"
+        #GPIO Hardware interface
+        - "/dev/gpiomem4:/dev/gpiomem4"
+        - "/dev/gpiochip4:/dev/gpiochip4"
+        #Video Hardware interface, this is where my app reads the processed image data
+        - "/dev/video0:/dev/video0"
+        - "/dev/video1:/dev/video1"
+        - "/dev/video2:/dev/video2"
+        - "/dev/video3:/dev/video3"
+        - "/dev/video4:/dev/video4"
+        - "/dev/video5:/dev/video5"
+        - "/dev/video6:/dev/video6"
+        - "/dev/video7:/dev/video7"
+        - "/dev/video19:/dev/video19"
+        - "/dev/video20:/dev/video20"
+        - "/dev/video21:/dev/video21"
+        - "/dev/video22:/dev/video22"
+        - "/dev/video23:/dev/video23"
+        - "/dev/video24:/dev/video24"
+        - "/dev/video25:/dev/video25"
+        - "/dev/video26:/dev/video26"
+        - "/dev/video27:/dev/video27"
+        - "/dev/video28:/dev/video28"
+        - "/dev/video29:/dev/video29"
+        - "/dev/video30:/dev/video30"
+        - "/dev/video31:/dev/video31"
+        - "/dev/video32:/dev/video32"
+        - "/dev/video33:/dev/video33"
+        - "/dev/video34:/dev/video34"
+        - "/dev/video35:/dev/video35"
+        #Media controller nodes, needed for the camera to work
+        - "/dev/media1:/dev/media1"
+        - "/dev/media2:/dev/media2"
+        - "/dev/media3:/dev/media3"
+        #Low level interface, allows the program to change the cameras settings
+        - "/dev/v4l-subdev0:/dev/v4l-subdev0"
+        - "/dev/v4l-subdev1:/dev/v4l-subdev1"
+        - "/dev/v4l-subdev2:/dev/v4l-subdev2"
+      #Give the container read write, make node privileges to the usb bus (id 189)
+      device_cgroup_rules:
+        - 'c 189:* rmw'
+      #Have the container restart automatically when stopped
+      restart: unless-stopped

@@ -20,12 +20,14 @@ logHandler = RotatingFileHandler(
 logging.basicConfig(
     level = logging.INFO, #This allows info logs & anything more severe into the log (change to warning when complete to only log important stuff)
     format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logHandler]
+    handlers=[logHandler,
+    logging.StreamHandler(sys.stdout)]
 )
 
 
 #Initalise the camera & close the program if there is an error
 def initialiseCamera():
+    #In future add redundancy so that it checks the architecture of the camera, then uses picamera if its a pi & something else if it isnt
     logging.info("Cattainer: Checking for connected cameras")
     try:
         #If the camera isnt connected this line will cause an error & go straight to except
@@ -79,12 +81,12 @@ def catDetect(picam2, model):
     #Capture a single frame
     frame = picam2.capture_array()
     #Check if the flag file is present
-    if os.path.exists("trigger_snapshot.flag"):
-        logging.info("Cattainer: snapshot flag is present, saving current frame to /static/background.png")
-        #Save the frame to /static/background.png
+    if os.path.exists("data/trigger_snapshot.flag"):
+        logging.info("Cattainer: snapshot flag is present, saving current frame to data/static/background.png")
+        #Save the frame to data/static/background.png
         correctedFrame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        cv2.imwrite("static/background.png", correctedFrame)
-        os.remove("trigger_snapshot.flag")
+        cv2.imwrite("data/static/background.png", correctedFrame)
+        os.remove("data/trigger_snapshot.flag")
 
     #Run inference on the frame
     output = model(frame, imgsz=320, )
@@ -117,7 +119,7 @@ def catDetect(picam2, model):
 def loadZones():
     logging.info("Cattainer: Loading saved_zones.json")
     try:
-        with open("saved_zones.json", "r") as file:
+        with open("data/saved_zones.json", "r") as file:
             zonesData = json.load(file)
             if zonesData == 0:
                 logging.error("Cattainer: No Zones found, please draw zones in the web UI")
@@ -175,12 +177,12 @@ if __name__ == "__main__":
     #Read the saved_zones.json
     zonesData = loadZones()
     #Check the time that the json file was last edited
-    lastKnownTime = os.path.getmtime("saved_zones.json")
+    lastKnownTime = os.path.getmtime("data/saved_zones.json")
 
     #Infinite Loop
     while(True):
         #Check the last time that the zones were loaded
-        currentKnownTime = os.path.getmtime("saved_zones.json")
+        currentKnownTime = os.path.getmtime("data/saved_zones.json")
         #Reload the zones if needed
         if currentKnownTime != lastKnownTime:
             zonesData = loadZones()
