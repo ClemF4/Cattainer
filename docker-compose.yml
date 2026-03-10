@@ -14,18 +14,21 @@ services:
       build: 
         context: ./cattainer-core
       volumes:
+        #Mount the shared storage from my repo into this container 
         - ./cattainer-data:/usr/local/app/data
         - ./cattainer-data/static:/usr/local/app/static
-        #Necessary
+        #Mount the device manager, this has details on what is plugged in currently
         - /run/udev:/run/udev
         #Map USB bus 3 from device to container, this is because my TPU is on bus 3 (shown by lsusb)
         - /dev/bus/usb/003:/dev/bus/usb/003
+      #Grant the container's processes the ability to interact with these hardware interfaces
       devices:
+        #DMA Hardware interface
         - "/dev/dma_heap:/dev/dma_heap"
-        #GPIO
+        #GPIO Hardware interface
         - "/dev/gpiomem4:/dev/gpiomem4"
         - "/dev/gpiochip4:/dev/gpiochip4"
-        # Mapping the video stack
+        #Video Hardware interface, this is where my app reads the processed image data
         - "/dev/video0:/dev/video0"
         - "/dev/video1:/dev/video1"
         - "/dev/video2:/dev/video2"
@@ -51,15 +54,16 @@ services:
         - "/dev/video33:/dev/video33"
         - "/dev/video34:/dev/video34"
         - "/dev/video35:/dev/video35"
-        #Necessary
+        #Media controller nodes, needed for the camera to work
         - "/dev/media1:/dev/media1"
         - "/dev/media2:/dev/media2"
         - "/dev/media3:/dev/media3"
-        #Needed for camera
+        #Low level interface, allows the program to change the cameras settings
         - "/dev/v4l-subdev0:/dev/v4l-subdev0"
         - "/dev/v4l-subdev1:/dev/v4l-subdev1"
         - "/dev/v4l-subdev2:/dev/v4l-subdev2"
-      #Give the container read write, make node privileges to the usb bus
+      #Give the container read write, make node privileges to the usb bus (id 189)
       device_cgroup_rules:
         - 'c 189:* rmw'
+      #Have the container restart automatically when stopped
       restart: unless-stopped
