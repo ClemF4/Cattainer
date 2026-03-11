@@ -1,11 +1,9 @@
 import logging
 from logging.handlers import RotatingFileHandler
-import sys
 import os
 import detection
 import zones
 import initialisation
-import deterrant
 
 #Create a loghandler which makes sure the log doesnt become huge after days of this script running 
 logHandler = RotatingFileHandler(
