@@ -5,7 +5,6 @@ import os
 logger = logging.getLogger(__name__)
 
 
-
 #Perform the logic of capturing a frame, running the model, and returning the correct output based on the model output
 def catDetect(picam2, model):
     #Capture a single frame
@@ -19,7 +18,7 @@ def catDetect(picam2, model):
         os.remove("data/trigger_snapshot.flag")
 
     #Run inference on the frame
-    output = model(frame, imgsz=320, )
+    output = model(frame, imgsz=320, verbose=False)
     #Extract the first output as our result since YOLO returns a list 
     result = output[0]
     #Find the bounding boxes

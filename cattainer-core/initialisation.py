@@ -7,6 +7,7 @@ import time
 
 logger = logging.getLogger(__name__)
 
+
 #Initalise the camera & close the program if there is an error
 def initialiseCamera():
     #In future add redundancy so that it checks the architecture of the camera, then uses picamera if its a pi & something else if it isnt

@@ -6,7 +6,6 @@ import numpy as np
 import cv2
 import deterrant
 
-
 logger = logging.getLogger(__name__)
 
 
