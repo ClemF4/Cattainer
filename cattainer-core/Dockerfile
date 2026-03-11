@@ -40,4 +40,4 @@ COPY --chown=app:app . .
 RUN usermod -aG video app && usermod -aG plugdev app
 USER app
 
-CMD ["python", "cattainer.py"]
+CMD ["python", "core.py"]
