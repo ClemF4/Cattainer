@@ -6,7 +6,7 @@
 Cattainer relies on Docker and Docker Compose. Run the following commands one by one in your terminal to install them and grant your user account the correct permissions:
 
 ```
-curl -fsSL [https://get.docker.com](https://get.docker.com) -o get-docker.sh
+curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 sudo usermod -aG docker $USER
 newgrp docker
