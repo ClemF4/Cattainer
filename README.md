@@ -3,6 +3,7 @@
 ## Installation
 
 1. Download
+
 Head to the releases page & download our release using the command line on the Raspberry Pi.
 
 Use `wget <link to file>` to download the release you want.
