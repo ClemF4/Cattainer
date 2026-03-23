@@ -39,7 +39,7 @@ def saved_zones():
         json.dump(zones_data, file, indent=4)
     return jsonify({"status": "success"}), 200
 
-#Route the flag file here, it creates a new empty file on my system called trigger_snapshot.flag
+#Route the flag file here, it creates a new empty file on my system called trigger_snapshot.flag used in detection.py
 @app.route('/triggerSnapshot', methods=['POST'])
 def trigger_snapshot():
     with open('data/trigger_snapshot.flag', 'w') as file:
