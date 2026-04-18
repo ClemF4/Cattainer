@@ -27,22 +27,26 @@ def loadZones():
 
 #Compare the current cat position to the zones
 def zoneLogic(targets, zonesData):
+    #Format the JSON zones by removing the x: and y: strings, and move the points into a formatted array
+    formattedZones = []
+    for zone in zonesData:
+        rawPoints = zone["coordinates"]
+        zoneType = zone["zoneType"]
+        polygonArray = np.array([[point["x"], point["y"]] for point in rawPoints], dtype=np.int32)
+        #Use a dictionary to append the zoneType and formatted polygons
+        formattedZones.append({"zoneType": zoneType, "polygonArray": polygonArray})
+
     #Pull the array & label of each box from out of the tuple one at a time
     for coords, label in targets:
         #Find the center x,y coords of the cat
         catCenter = (coords[0], coords[1])
-        for zone in zonesData:
-            #Find the zone type & extract the raw coordinates of this zone
-            zoneType = zone["zoneType"]
-            rawPoints = zone["coordinates"]
-            #Format the points (remove the "x" & "y" and just keep the numbers)
-            formattedPoints =[]
-            for point in rawPoints:
-                xVal = point["x"]
-                yVal = point["y"]
-                formattedPoints.append([xVal, yVal])
-            #Format these points into a format which cv2.pointPolygonTest accepts as an input
-            polygonArray = np.array(formattedPoints, dtype=np.int32)
+
+        # Iterate over the formatted zones and check if cat coords are in any zones
+        for fzone in formattedZones:
+            # Grab the formatted polygon and zone type
+            zoneType = fzone["zoneType"]
+            polygonArray = fzone["polygonArray"]
+
             #Use opencv's function, this checks whether the catCenter points are within polygonArray, the 3rd argument is set to false since we dont care about the distance from the point to the polygon
             isInside = cv2.pointPolygonTest(polygonArray, catCenter, False)
             #Returns 1 if inside, 0 if on border, and -1 if outside
