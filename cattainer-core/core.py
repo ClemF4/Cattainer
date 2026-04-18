@@ -25,7 +25,7 @@ if __name__ == "__main__":
     picam2 = initialisation.initialiseCamera()
     model = initialisation.initaliseTPU()
     #Read the saved_zones.json
-    zonesData = zones.loadZones()
+    formattedZones = zones.loadZones()
     #Check the time that the json file was last edited
     lastKnownTime = os.path.getmtime("data/saved_zones.json")
 
@@ -35,7 +35,7 @@ if __name__ == "__main__":
         currentKnownTime = os.path.getmtime("data/saved_zones.json")
         #Reload the zones if needed
         if currentKnownTime != lastKnownTime:
-            zonesData = zones.loadZones()
+            formattedZones = zones.loadZones()
             logging.info("Cattainer: New zones detected, reloading zones")
             lastKnownTime = currentKnownTime
         #Run inference
@@ -43,4 +43,4 @@ if __name__ == "__main__":
         #Check if a box with confidence>60% has been found
         if len(targets) == 0:
             continue #This restarts the while loop
-        zones.zoneLogic(targets, zonesData)
+        zones.zoneLogic(targets, formattedZones)

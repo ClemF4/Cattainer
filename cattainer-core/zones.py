@@ -15,27 +15,30 @@ def loadZones():
     try:
         with open("data/saved_zones.json", "r") as file:
             zonesData = json.load(file)
+
+            #Check if zoneData is empty
             if zonesData == 0:
                 logging.error("Cattainer: No Zones found, please draw zones in the web UI")
                 sys.exit(1)
+            
+            #Format the JSON zones by removing the x: and y: strings, and move the points into a formatted array
+            formattedZones = []
+            for zone in zonesData:
+                rawPoints = zone["coordinates"]
+                zoneType = zone["zoneType"]
+                polygonArray = np.array([[point["x"], point["y"]] for point in rawPoints], dtype=np.int32)
+                #Use a dictionary to append the zoneType and formatted polygons
+                formattedZones.append({"zoneType": zoneType, "polygonArray": polygonArray})
             logging.info(f"Cattainer: Loaded {len(zonesData)} zones successfully")
-            return zonesData
+            return formattedZones
+        
     except FileNotFoundError:
         logging.error("Cattainer: saved_zones.json file not found, please redraw the zones")
         sys.exit(1)
 
 
 #Compare the current cat position to the zones
-def zoneLogic(targets, zonesData):
-    #Format the JSON zones by removing the x: and y: strings, and move the points into a formatted array
-    formattedZones = []
-    for zone in zonesData:
-        rawPoints = zone["coordinates"]
-        zoneType = zone["zoneType"]
-        polygonArray = np.array([[point["x"], point["y"]] for point in rawPoints], dtype=np.int32)
-        #Use a dictionary to append the zoneType and formatted polygons
-        formattedZones.append({"zoneType": zoneType, "polygonArray": polygonArray})
-
+def zoneLogic(targets, formattedZones):
     #Pull the array & label of each box from out of the tuple one at a time
     for coords, label in targets:
         #Find the center x,y coords of the cat
