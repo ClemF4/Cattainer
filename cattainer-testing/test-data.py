@@ -1,12 +1,28 @@
 import logging
 from picamera2 import Picamera2
-import sys
 import time
 from datetime import datetime
 from libcamera import Transform
+import sys
+import os
+
+# 1. Get the absolute path of the directory this script is inside (cattainer-testing)
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# 2. Build a path that goes up one level ('..') and down into 'cattainer-core'
+core_dir = os.path.join(current_dir, '..', 'cattainer-core')
+
+# 3. Inject that folder into Python's search path
+sys.path.append(core_dir)
+
+# 4. Now Python knows where to look, and you can import everything normally!
+import initialisation
+import detection
+import zones
+import deterrant
 
 #Initalise the camera & close the program if there is an error
-def initialiseCamera():
+def initialiseCamera2():
     #In future add redundancy so that it checks the architecture of the camera, then uses picamera if its a pi & something else if it isnt
     logging.info("Cattainer: Checking for connected cameras")
     try:
@@ -29,6 +45,7 @@ def initialiseCamera():
 
 
 if __name__ == "__main__":
-    picam2 = initialiseCamera()
+    #picam2 = initialisation.initialiseCamera()
+    picam2 = initialiseCamera2()
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    picam2.start_and_record_video(f"video_{timestamp}.mp4", duration=120)
+    picam2.start_and_record_video(f"test-recordings/video_{timestamp}.mp4", duration=10)
