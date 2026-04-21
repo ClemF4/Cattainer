@@ -66,9 +66,9 @@ def catDetect(frame, model):
 
 #Load the zones from the .json into a variable
 def loadZones():
-    logging.info("Cattainer: Loading saved_zones.json")
+    logging.info("Cattainer: Loading savedZones.json")
     try:
-        with open("/home/cattainer/Cattainer/cattainer-data/saved_zones.json", "r") as file:
+        with open("/home/cattainer/Cattainer/cattainer-data/savedZones.json", "r") as file:
             zonesData = json.load(file)
 
             #Check if zoneData is empty
@@ -88,7 +88,7 @@ def loadZones():
             return formattedZones
         
     except FileNotFoundError:
-        logging.error("Cattainer: saved_zones.json file not found, please redraw the zones")
+        logging.error("Cattainer: savedZones.json file not found, please redraw the zones")
         sys.exit(1)
 
 

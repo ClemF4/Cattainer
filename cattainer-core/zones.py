@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 
 #Load the zones from the .json into a variable
 def loadZones():
-    logging.info("Cattainer: Loading saved_zones.json")
+    logging.info("Cattainer: Loading savedZones.json")
     try:
-        with open("data/saved_zones.json", "r") as file:
+        with open("data/savedZones.json", "r") as file:
             zonesData = json.load(file)
 
             #Check if zoneData is empty
@@ -33,7 +33,7 @@ def loadZones():
             return formattedZones
         
     except FileNotFoundError:
-        logging.error("Cattainer: saved_zones.json file not found, please redraw the zones")
+        logging.error("Cattainer: savedZones.json file not found, please redraw the zones")
         sys.exit(1)
 
 
@@ -63,5 +63,5 @@ def zoneLogic(targets, formattedZones):
                     #If the cat is in the amber zone & is jumping trigger deterrant
                     deterrant.triggerUltrasonic()
                     break  
-            logging.info(f"Cattainer: The {label} is in no zone")
+            logging.info(f"Cattainer: Deterrent trigger conditions not met")
 
