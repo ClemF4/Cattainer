@@ -1,24 +1,7 @@
 import sys
 import os
-
-# Get the absolute path of the directory this script is inside (cattainer-testing)
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Build a path that goes up one level ('..') and down into 'cattainer-core'
-core_dir = os.path.join(current_dir, '..', 'cattainer-core')
-
-# Inject that folder into Python's search path
-sys.path.append(core_dir)
-
-
 import logging
 from logging.handlers import RotatingFileHandler
-import os
-import detection
-import zones
-import initialisation
-import cv2
-
 
 #Create a loghandler which makes sure the log doesnt become huge after days of this script running 
 logHandler = RotatingFileHandler(
@@ -33,6 +16,22 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[logHandler]
 )
+
+# Get the absolute path of the directory this script is inside (cattainer-testing)
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Build a path that goes up one level ('..') and down into 'cattainer-core'
+core_dir = os.path.join(current_dir, '..', 'cattainer-core')
+
+# Inject that folder into Python's search path
+sys.path.append(core_dir)
+
+
+import zones # type: ignore
+import initialisation # type: ignore
+import cv2
+import json
+import numpy as np
 
 
 #Perform the logic of capturing a frame, running the model, and returning the correct output based on the model output
@@ -103,7 +102,7 @@ if __name__ == "__main__":
     inputVideo = f"test-recordings/{video}.mp4"
 
     # read the video
-    cap = cv2.VideoCapture("test-recordings/video_20260421_170719.mp4")
+    cap = cv2.VideoCapture(inputVideo)
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -111,7 +110,7 @@ if __name__ == "__main__":
 
         # Convert colors to RGB for YOLO
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        targets = detection.catDetect(rgb_frame, model)
+        targets = catDetect(rgb_frame, model)
 
         if len(targets) > 0:
             zones.zoneLogic(targets, formattedZones)

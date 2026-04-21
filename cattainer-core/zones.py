@@ -63,3 +63,5 @@ def zoneLogic(targets, formattedZones):
                     #If the cat is in the amber zone & is jumping trigger deterrant
                     deterrant.triggerUltrasonic()
                     break  
+            logging.info(f"Cattainer: The {label} is in no zone")
+
