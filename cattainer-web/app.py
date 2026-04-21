@@ -10,8 +10,8 @@ def index():
     return render_template('index.html')
 
 #Have the app route save zones here & def safe_zones(), do all the JSON logic here, saving it to a file ect
-@app.route('/saved_zones', methods=['POST'])
-def saved_zones():
+@app.route('/savedZones', methods=['POST'])
+def savedZones():
     zones_data = request.get_json()
     #Make sure that the data is in the correct format 
     if not isinstance(zones_data, list):
@@ -35,7 +35,7 @@ def saved_zones():
             return jsonify({"status": "error, please input zones correctly"}), 400        
 
     #Save the zones into a .json file
-    with open('data/saved_zones.json', 'w') as file:
+    with open('data/savedZones.json', 'w') as file:
         json.dump(zones_data, file, indent=4)
     return jsonify({"status": "success"}), 200
 
