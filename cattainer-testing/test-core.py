@@ -65,12 +65,41 @@ def catDetect(frame, model):
 
 
 
+#Load the zones from the .json into a variable
+def loadZones():
+    logging.info("Cattainer: Loading saved_zones.json")
+    try:
+        with open("/home/cattainer/Cattainer/cattainer-data/saved_zones.json", "r") as file:
+            zonesData = json.load(file)
+
+            #Check if zoneData is empty
+            if zonesData == 0:
+                logging.error("Cattainer: No Zones found, please draw zones in the web UI")
+                sys.exit(1)
+            
+            #Format the JSON zones by removing the x: and y: strings, and move the points into a formatted array
+            formattedZones = []
+            for zone in zonesData:
+                rawPoints = zone["coordinates"]
+                zoneType = zone["zoneType"]
+                polygonArray = np.array([[point["x"], point["y"]] for point in rawPoints], dtype=np.int32)
+                #Use a dictionary to append the zoneType and formatted polygons
+                formattedZones.append({"zoneType": zoneType, "polygonArray": polygonArray})
+            logging.info(f"Cattainer: Loaded {len(zonesData)} zones successfully")
+            return formattedZones
+        
+    except FileNotFoundError:
+        logging.error("Cattainer: saved_zones.json file not found, please redraw the zones")
+        sys.exit(1)
+
+
+
 if __name__ == "__main__":
     model = initialisation.initaliseTPU()
     #Read the saved_zones.json
-    formattedZones = zones.loadZones()
+    formattedZones = loadZones()
 
-    video = ""
+    video = "video_20260421_190007"
     inputVideo = f"test-recordings/{video}.mp4"
 
     # read the video
