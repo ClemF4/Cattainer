@@ -1,10 +1,11 @@
 import logging
 import requests
+import time
 
 logger = logging.getLogger(__name__)
 
 #Hardcoded IP for testing
-HA_WEBHOOK_URL = "http://127.0.0.1:8123/api/webhook/cattainer_incoming_data"
+HA_WEBHOOK_URL = "http://192.168.1.72:8123/api/webhook/cattainer_incoming_data"
 
 
 #Trigger the deterrant (Ultrasonic Device) & Send Notification
@@ -20,6 +21,10 @@ def triggerUltrasonic():
 
         if response.status_code == 200:
             logging.info("Cattainer: Sucessfully sent webhook to Home Assistant Server")
+            payload = {"cat_detected": False}
+            response = requests.post(HA_WEBHOOK_URL, json=payload, timeout=5)
+
+
         else:
             logging.error(f"Cattainer: Webhook failed with status code: {response.status_code}")
 
