@@ -6,16 +6,15 @@ from libcamera import Transform
 import sys
 import os
 
-# 1. Get the absolute path of the directory this script is inside (cattainer-testing)
+# Get the absolute path of the directory this script is inside (cattainer-testing)
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# 2. Build a path that goes up one level ('..') and down into 'cattainer-core'
+# Build a path that goes up one level ('..') and down into 'cattainer-core'
 core_dir = os.path.join(current_dir, '..', 'cattainer-core')
 
-# 3. Inject that folder into Python's search path
+# Inject that folder into Python's search path
 sys.path.append(core_dir)
 
-# 4. Now Python knows where to look, and you can import everything normally!
 import initialisation
 import detection
 import zones
