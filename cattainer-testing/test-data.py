@@ -4,21 +4,7 @@ import time
 from datetime import datetime
 from libcamera import Transform
 import sys
-import os
 
-# Get the absolute path of the directory this script is inside (cattainer-testing)
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Build a path that goes up one level ('..') and down into 'cattainer-core'
-core_dir = os.path.join(current_dir, '..', 'cattainer-core')
-
-# Inject that folder into Python's search path
-sys.path.append(core_dir)
-
-import initialisation
-import detection
-import zones
-import deterrant
 
 #Initalise the camera & close the program if there is an error
 def initialiseCamera2():

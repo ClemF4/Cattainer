@@ -17,6 +17,8 @@ import os
 import detection
 import zones
 import initialisation
+import cv2
+
 
 #Create a loghandler which makes sure the log doesnt become huge after days of this script running 
 logHandler = RotatingFileHandler(
@@ -33,27 +35,56 @@ logging.basicConfig(
 )
 
 
+#Perform the logic of capturing a frame, running the model, and returning the correct output based on the model output
+def catDetect(frame, model):
+    #Run inference on the frame
+    output = model(frame, imgsz=320, verbose=False)
+    #Extract the first output as our result since YOLO returns a list 
+    result = output[0]
+    #Find the bounding boxes
+    boxes = result.boxes
+    #Create an empty array which will be returned to main
+    highConfBoxes = []
+    #Check if the model actually found anything 
+    if len(boxes)>0:
+        #Iterate through every box & check if they are high confidence
+        for box in boxes:
+            confidence = box.conf.item()
+            if confidence > 0.6:
+                logging.info("Cattainer: Found an object with confidence > 60%")
+                #Extract the coords
+                coords = box.xywh[0].tolist()
+                #Extract the class
+                classID = int(box.cls.item())
+                label = result.names[classID]
+                logging.info(f"Cattainer: Bounding box center coordinates: {coords}, Lables: {label}")
+                highConfBoxes.append((coords, label))
+    if len(highConfBoxes) == 0:    
+        logging.info("Cattainer: Did not find any objects with confidence > 60%")
+    return highConfBoxes
+
+
+
 if __name__ == "__main__":
-    #Initialise Camera & TPU
-    picam2 = initialisation.initialiseCamera()
     model = initialisation.initaliseTPU()
     #Read the saved_zones.json
     formattedZones = zones.loadZones()
-    #Check the time that the json file was last edited
-    lastKnownTime = os.path.getmtime("data/saved_zones.json")
 
-    #Infinite Loop
-    while(True):
-        #Check the last time that the zones were loaded
-        currentKnownTime = os.path.getmtime("data/saved_zones.json")
-        #Reload the zones if needed
-        if currentKnownTime != lastKnownTime:
-            formattedZones = zones.loadZones()
-            logging.info("Cattainer: New zones detected, reloading zones")
-            lastKnownTime = currentKnownTime
-        #Run inference
-        targets = detection.catDetect(picam2, model)
-        #Check if a box with confidence>60% has been found
-        if len(targets) == 0:
-            continue #This restarts the while loop
-        zones.zoneLogic(targets, formattedZones)
+    video = ""
+    inputVideo = f"test-recordings/{video}.mp4"
+
+    # read the video
+    cap = cv2.VideoCapture("test-recordings/video_20260421_170719.mp4")
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret: break # Video is over
+
+        # Convert colors to RGB for YOLO
+        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        targets = detection.catDetect(rgb_frame, model)
+
+        if len(targets) > 0:
+            zones.zoneLogic(targets, formattedZones)
+
+    cap.release()
