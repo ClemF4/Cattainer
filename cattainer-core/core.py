@@ -7,14 +7,14 @@ import initialisation
 
 #Create a loghandler which makes sure the log doesnt become huge after days of this script running 
 logHandler = RotatingFileHandler(
-    filename='cattainer.log',
+    filename='data/cattainer.log',
     maxBytes=5 * 1024 * 1024, #5 megabytes (5 * 1024 kb * 1024 bytes)
     backupCount=2
 )
 
 #Setup the loggers name, format, and level (change the level to warning when in production to ignore all the info logs)
 logging.basicConfig(
-    level = logging.WARNING, #This allows warning logs & anything more severe into the log
+    level = logging.INFO, #This allows warning logs & anything more severe into the log
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[logHandler]
 )

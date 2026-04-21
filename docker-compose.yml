@@ -20,7 +20,7 @@ services:
         #Mount the device manager, this has details on what is plugged in currently
         - /run/udev:/run/udev
         #Map USB bus 3 from device to container, this is because my TPU is on bus 3 (shown by lsusb)
-        - /dev/bus/usb/003:/dev/bus/usb/003
+        - /dev/bus/usb:/dev/bus/usb
       #Grant the container's processes the ability to interact with these hardware interfaces
       devices:
         #DMA Hardware interface
