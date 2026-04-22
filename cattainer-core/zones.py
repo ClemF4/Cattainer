@@ -1,10 +1,9 @@
 import logging
 import json
 import sys
-import deterrant
 import numpy as np
 import cv2
-import deterrant
+import deterrent
 
 logger = logging.getLogger(__name__)
 
@@ -57,11 +56,12 @@ def zoneLogic(targets, formattedZones):
                 logging.info(f"Cattainer: The {label} is inside the: {zoneType}")
                 if zoneType == "red":
                     #If the cat is in the red zone trigger deterrant
-                    deterrant.triggerUltrasonic()
-                    break #Stops function immediatly
+                    deterrent.triggerUltrasonic()
+                    return True #Stops function immediatly
                 elif zoneType == "amber" and label == "cat_jumping":
                     #If the cat is in the amber zone & is jumping trigger deterrant
-                    deterrant.triggerUltrasonic()
-                    break  
+                    deterrent.triggerUltrasonic()
+                    return True  
             logging.info(f"Cattainer: Deterrent trigger conditions not met")
 
+    return False

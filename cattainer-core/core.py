@@ -1,9 +1,11 @@
 import logging
 from logging.handlers import RotatingFileHandler
 import os
+import time
 import detection
 import zones
 import initialisation
+import deterrent
 
 #Create a loghandler which makes sure the log doesnt become huge after days of this script running 
 logHandler = RotatingFileHandler(
@@ -28,6 +30,8 @@ if __name__ == "__main__":
     formattedZones = zones.loadZones()
     #Check the time that the json file was last edited
     lastKnownTime = os.path.getmtime("data/saved_zones.json")
+    deterrentActive = False
+    deterrentLastTriggered = time.time()
 
     #Infinite Loop
     while(True):
@@ -42,5 +46,10 @@ if __name__ == "__main__":
         targets = detection.catDetect(picam2, model)
         #Check if a box with confidence>60% has been found
         if len(targets) == 0:
+            if ((time.time() - deterrentLastTriggered > 2) and (deterrentActive == True)):
+                deterrent.resetUltrasonic()
+                deterrentActive = False
             continue #This restarts the while loop
-        zones.zoneLogic(targets, formattedZones)
+        deterrentActive = zones.zoneLogic(targets, formattedZones)
+        if deterrentActive == True:
+            deterrentLastTriggered = time.time()
