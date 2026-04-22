@@ -98,7 +98,7 @@ if __name__ == "__main__":
     #Read the saved_zones.json
     formattedZones = loadZones()
 
-    video = "video_20260421_190007"
+    video = "video_20260422_113518"
     inputVideo = f"test-recordings/{video}.mp4"
 
     # read the video
