@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -29,6 +30,7 @@ sys.path.append(core_dir)
 
 import zones # type: ignore
 import initialisation # type: ignore
+import deterrent # type: ignore
 import cv2
 import json
 import numpy as np
@@ -97,8 +99,10 @@ if __name__ == "__main__":
     model = initialisation.initaliseTPU()
     #Read the saved_zones.json
     formattedZones = loadZones()
-
-    video = "video_20260422_113518"
+    #Check the time that the json file was last edited
+    deterrentActive = False
+    deterrentLastTriggered = time.time()
+    video = "video_20260423_140337"
     inputVideo = f"test-recordings/{video}.mp4"
 
     # read the video
@@ -112,7 +116,12 @@ if __name__ == "__main__":
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         targets = catDetect(rgb_frame, model)
 
-        if len(targets) > 0:
-            zones.zoneLogic(targets, formattedZones)
-
+        if len(targets) == 0:
+            if ((time.time() - deterrentLastTriggered > 2) and (deterrentActive == True)):
+                deterrent.resetUltrasonic()
+                deterrentActive = False
+            continue #This restarts the while loop
+        deterrentActive = zones.zoneLogic(targets, formattedZones)
+        if deterrentActive == True:
+            deterrentLastTriggered = time.time()
     cap.release()

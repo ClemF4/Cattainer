@@ -33,4 +33,4 @@ if __name__ == "__main__":
     #picam2 = initialisation.initialiseCamera()
     picam2 = initialiseCamera2()
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    picam2.start_and_record_video(f"test-recordings/video_{timestamp}.mp4", duration=60)
+    picam2.start_and_record_video(f"test-recordings/video_{timestamp}.mp4", duration=120)
