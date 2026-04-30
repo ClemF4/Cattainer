@@ -13,8 +13,7 @@ def catDetect(picam2, model):
     if os.path.exists("data/trigger_snapshot.flag"):
         logging.info("Cattainer: snapshot flag is present, saving current frame to data/static/background.png")
         #Save the frame to data/static/background.png
-        correctedFrame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        cv2.imwrite("data/static/background.png", correctedFrame)
+        cv2.imwrite("data/static/background.png", frame)
         os.remove("data/trigger_snapshot.flag")
 
     #Run inference on the frame

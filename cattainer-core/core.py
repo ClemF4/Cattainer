@@ -29,14 +29,14 @@ if __name__ == "__main__":
     #Read the saved_zones.json
     formattedZones = zones.loadZones()
     #Check the time that the json file was last edited
-    lastKnownTime = os.path.getmtime("data/saved_zones.json")
+    lastKnownTime = os.path.getmtime("data/savedZones.json")
     deterrentActive = False
     deterrentLastTriggered = time.time()
 
     #Infinite Loop
     while(True):
         #Check the last time that the zones were loaded
-        currentKnownTime = os.path.getmtime("data/saved_zones.json")
+        currentKnownTime = os.path.getmtime("data/savedZones.json")
         #Reload the zones if needed
         if currentKnownTime != lastKnownTime:
             formattedZones = zones.loadZones()

@@ -13,6 +13,8 @@ services:
   core:
       build: 
         context: ./cattainer-core
+      #command: tail -f /dev/null #force container to not crash
+      privileged: true #for debugging
       volumes:
         #Mount the shared storage from my repo into this container 
         - ./cattainer-data:/usr/local/app/data
@@ -55,6 +57,7 @@ services:
         - "/dev/video34:/dev/video34"
         - "/dev/video35:/dev/video35"
         #Media controller nodes, needed for the camera to work
+        - "/dev/media1:/dev/media0"
         - "/dev/media1:/dev/media1"
         - "/dev/media2:/dev/media2"
         - "/dev/media3:/dev/media3"
@@ -65,5 +68,8 @@ services:
       #Give the container read write, make node privileges to the usb bus (id 189)
       device_cgroup_rules:
         - 'c 189:* rmw'
+        - 'c 81:* rmw'
+        - 'c 89:* rmw'
+
       #Have the container restart automatically when stopped
       restart: unless-stopped
