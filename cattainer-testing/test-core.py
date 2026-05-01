@@ -113,8 +113,8 @@ if __name__ == "__main__":
         if not ret: break # Video is over
 
         # Convert colors to RGB for YOLO
-        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        targets = catDetect(rgb_frame, model)
+        #rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        targets = catDetect(frame, model)
 
         if len(targets) == 0:
             if ((time.time() - deterrentLastTriggered > 2) and (deterrentActive == True)):
