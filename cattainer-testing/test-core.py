@@ -102,7 +102,7 @@ if __name__ == "__main__":
     #Check the time that the json file was last edited
     deterrentActive = False
     deterrentLastTriggered = time.time()
-    video = "video_20260423_140337"
+    video = "video1"
     inputVideo = f"test-recordings/{video}.mp4"
 
     # read the video
