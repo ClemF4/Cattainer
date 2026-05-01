@@ -13,7 +13,7 @@ logHandler = RotatingFileHandler(
 
 #Setup the loggers name, format, and level (change the level to warning when in production to ignore all the info logs)
 logging.basicConfig(
-    level = logging.INFO, #This allows warning logs & anything more severe into the log
+    level = logging.WARNING, #This allows warning logs & anything more severe into the log
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[logHandler]
 )
@@ -112,6 +112,11 @@ if __name__ == "__main__":
         ret, frame = cap.read()
         if not ret: break # Video is over
 
+        #get the video time in ms and format it into minutes:seconds
+        vid_msec = cap.get(cv2.CAP_PROP_POS_MSEC)
+        vid_sec = int(vid_msec / 1000)
+        time_str = f"{vid_sec // 60:02d}:{vid_sec % 60:02d}"
+
         # Convert colors to RGB for YOLO
         #rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         targets = catDetect(frame, model)
@@ -119,9 +124,15 @@ if __name__ == "__main__":
         if len(targets) == 0:
             if ((time.time() - deterrentLastTriggered > 2) and (deterrentActive == True)):
                 deterrent.resetUltrasonic()
+                logging.warning(f"Cattainer: Video Time [{time_str}]")
                 deterrentActive = False
             continue #This restarts the while loop
-        deterrentActive = zones.zoneLogic(targets, formattedZones)
+
+        newDeterrentState = zones.zoneLogic(targets, formattedZones)
+        if newDeterrentState == True and deterrentActive == False:
+            logging.warning(f"Cattainer: Video Time [{time_str}]")
+            deterrentActive = newDeterrentState
+        
         if deterrentActive == True:
             deterrentLastTriggered = time.time()
     cap.release()
