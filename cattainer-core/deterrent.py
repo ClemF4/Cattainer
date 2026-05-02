@@ -10,7 +10,7 @@ HA_WEBHOOK_URL = "http://192.168.0.66:8123/api/webhook/cattainer_incoming_data"
 
 #Trigger the deterrant (Ultrasonic Device) & Send Notification
 def triggerUltrasonic():
-    logging.warning("Cattainer: TRIGGERING DETERRANT")
+    logging.info("Cattainer: TRIGGERING DETERRANT")
 
     try:
         # payload is what binary_sensor.py expects
@@ -20,7 +20,7 @@ def triggerUltrasonic():
         response = requests.post(HA_WEBHOOK_URL, json=payload, timeout=5)
 
         if response.status_code == 200:
-            logging.warning("Cattainer: Sucessfully sent webhook to Home Assistant Server")
+            logging.info("Cattainer: Sucessfully sent webhook to Home Assistant Server")
 
         else:
             logging.error(f"Cattainer: Webhook failed with status code: {response.status_code}")
@@ -33,7 +33,7 @@ def triggerUltrasonic():
 
 #Reset the deterrant (Ultrasonic Device) & Send "False"
 def resetUltrasonic():
-    logging.warning("Cattainer: RESETING DETERRANT")
+    logging.info("Cattainer: RESETING DETERRANT")
 
     try:
         # payload is what binary_sensor.py expects
@@ -43,7 +43,7 @@ def resetUltrasonic():
         response = requests.post(HA_WEBHOOK_URL, json=payload, timeout=5)
 
         if response.status_code == 200:
-            logging.warning("Cattainer: Sucessfully sent webhook to Home Assistant Server")
+            logging.info("Cattainer: Sucessfully sent webhook to Home Assistant Server")
         else:
             logging.error(f"Cattainer: Webhook failed with status code: {response.status_code}")
 

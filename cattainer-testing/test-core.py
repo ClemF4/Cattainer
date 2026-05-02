@@ -102,7 +102,7 @@ if __name__ == "__main__":
     #Check the time that the json file was last edited
     deterrentActive = False
     deterrentLastTriggered = time.time()
-    video = "video1"
+    video = "video4"
     inputVideo = f"test-recordings/{video}.mp4"
 
     # read the video
@@ -122,17 +122,24 @@ if __name__ == "__main__":
         targets = catDetect(frame, model)
 
         if len(targets) == 0:
-            if ((time.time() - deterrentLastTriggered > 2) and (deterrentActive == True)):
+            if ((time.time() - deterrentLastTriggered > 3) and (deterrentActive == True)):
                 deterrent.resetUltrasonic()
-                logging.warning(f"Cattainer: Video Time [{time_str}]")
+                logging.warning(f"Cattainer: DETERRENT RESET! Video Time [{time_str}]")
                 deterrentActive = False
             continue #This restarts the while loop
 
         newDeterrentState = zones.zoneLogic(targets, formattedZones)
         if newDeterrentState == True and deterrentActive == False:
-            logging.warning(f"Cattainer: Video Time [{time_str}]")
+            deterrent.triggerUltrasonic()
+            logging.warning(f"Cattainer: DETERRENT TRIGGERED! Video Time: [{time_str}]")
             deterrentActive = newDeterrentState
         
         if deterrentActive == True:
             deterrentLastTriggered = time.time()
     cap.release()
+
+    cv2.destroyAllWindows() 
+    
+    deterrent.resetUltrasonic()
+    logging.warning("Cattainer: Video testing complete. Exiting.")
+    sys.exit(0) #The 0 tells the terminal the script finished successfully without errors

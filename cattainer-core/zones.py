@@ -56,11 +56,11 @@ def zoneLogic(targets, formattedZones):
                 logging.info(f"Cattainer: The {label} is inside the: {zoneType}")
                 if zoneType == "red":
                     #If the cat is in the red zone trigger deterrant
-                    deterrent.triggerUltrasonic()
+                    #deterrent.triggerUltrasonic()
                     return True #Stops function immediatly
                 elif zoneType == "amber" and label == "cat_jumping":
                     #If the cat is in the amber zone & is jumping trigger deterrant
-                    deterrent.triggerUltrasonic()
+                    #deterrent.triggerUltrasonic()
                     return True  
             logging.info(f"Cattainer: Deterrent trigger conditions not met")
 
