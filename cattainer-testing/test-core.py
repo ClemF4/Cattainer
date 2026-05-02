@@ -102,7 +102,8 @@ if __name__ == "__main__":
     #Check the time that the json file was last edited
     deterrentActive = False
     deterrentLastTriggered = time.time()
-    video = "video4"
+    badBehaviour = False
+    video = "video1"
     inputVideo = f"test-recordings/{video}.mp4"
 
     # read the video
@@ -122,19 +123,22 @@ if __name__ == "__main__":
         targets = catDetect(frame, model)
 
         if len(targets) == 0:
-            if ((time.time() - deterrentLastTriggered > 3) and (deterrentActive == True)):
+            badBehaviour = False
+        else:
+            badBehaviour = zones.zoneLogic(targets, formattedZones)
+
+        if badBehaviour == True and deterrentActive == False:
+            deterrent.triggerUltrasonic()
+            logging.warning(f"Cattainer: DETERRENT TRIGGERED! Video Time: [{time_str}]")
+            deterrentActive = True   
+
+        elif badBehaviour == False and deterrentActive == True:
+            if (time.time() - deterrentLastTriggered) > 3:
                 deterrent.resetUltrasonic()
                 logging.warning(f"Cattainer: DETERRENT RESET! Video Time [{time_str}]")
                 deterrentActive = False
-            continue #This restarts the while loop
 
-        newDeterrentState = zones.zoneLogic(targets, formattedZones)
-        if newDeterrentState == True and deterrentActive == False:
-            deterrent.triggerUltrasonic()
-            logging.warning(f"Cattainer: DETERRENT TRIGGERED! Video Time: [{time_str}]")
-            deterrentActive = newDeterrentState
-        
-        if deterrentActive == True:
+        if badBehaviour == True:
             deterrentLastTriggered = time.time()
     cap.release()
 
