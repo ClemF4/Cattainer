@@ -59,7 +59,9 @@ Cattainer/
 
 ## System Architecture
 
-![Core System Flowchart](assets/core-flowchart.png)
+<p align="center">
+  <img src="assets/core-flowchart.png" alt="Core System Flowchart">
+</p>
 
 Cattainer uses a decoupled two-container architecture orchestrated by `docker-compose.yml` and linked through a shared persistent volume:
 
@@ -115,7 +117,9 @@ docker compose up -d
 
 ## Usage & Zone Configuration
 
-![Web GUI](assets/web-gui.png)
+<p align="center">
+  <img src="assets/web-gui.png" alt="Web GUI">
+</p>
 
 1. **Access the Web UI:** Open a browser on your local network and navigate to `http://<RASPBERRY_PI_IP>:5000` (or open the **Cattainer** panel directly inside Home Assistant).
 2. **Capture a Garden Snapshot:** Click **Refresh Image**. The web server signals the Core container to grab a live frame from the Pi HQ Camera and refreshes the canvas after 1 second.
@@ -127,7 +131,9 @@ docker compose up -d
 
 ## Performance & Testing
 
-![Inference Example](assets/inference-demo.png)
+<p align="center">
+  <img src="assets/inference-demo.png" alt="Inference Example">
+</p>
 
 * **Hardware Benchmarks (Raspberry Pi 5 + Coral USB TPU running YOLOv8n @ 320x320):**
   * **Average Frame Rate:** 33 FPS (consistently 31–35 FPS, exceeding the 30 FPS real-time specification required to track a cat moving at up to 13.4 m/s).
