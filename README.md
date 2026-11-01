@@ -144,7 +144,7 @@ docker compose up -d
 
 ---
 
-## Future Roadmap
+## Potential Future Upgrades
 
 * **Asynchronous Multi-Threaded Pipeline:** Transition `core.py` from a synchronous loop to a 3-thread Producer/Consumer architecture (Frame Capture $\rightarrow$ Queue 1 $\rightarrow$ TPU Inference $\rightarrow$ Queue 2 $\rightarrow$ Zone Logic & Deterrent) with a drop-oldest frame policy.
 * **Generalised Model & Human-in-the-Loop (HITL):** Expand training across diverse cat breeds, coats, and gardens, incorporating user verification prompts for low-confidence (<70%) detections.
