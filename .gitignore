@@ -60,7 +60,6 @@ dkms.conf
 *.mp4
 *.avi
 *.jpg
-*.png
 
 #Docker Container core
 core
