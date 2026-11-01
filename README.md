@@ -1,4 +1,4 @@
-# 🐾 Cattainer
+# Cattainer
 
 **An autonomous, self-hosted AI cat monitoring and predictive escape deterrence system powered by Raspberry Pi 5, Google Coral Edge TPU, and Docker.**
 
